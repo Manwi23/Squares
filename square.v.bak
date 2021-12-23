@@ -1,0 +1,28 @@
+module bouncing_line(output [9:0] nu, output [9:0] nd,
+								input [9:0] u, input [9:0] d, 
+								input [9:0] h, input clk);
+			
+	reg moving_down;
+	reg prev_moving_down;
+	initial begin
+		moving_down = 1'b1;
+		prev_moving_down = 1'b1;
+	end
+	
+	assign nu = (d == h) ? u - 1 : ((u == 0) ? u + 1 : (moving_down ? u + 1 : u - 1)); 
+	assign nd = (d == h) ? d - 1 : ((u == 0) ? d + 1 : (moving_down ? d + 1 : d - 1)); 
+	
+	always @(posedge clk) begin
+		moving_down <= prev_moving_down;
+		prev_moving_down <= (d == h) ? 1'b0 : ((u == 0) ? 1'b1 : prev_moving_down);
+	end							
+endmodule
+
+module bouncing_square(output [9:0] nl, output [9:0] nr, output [9:0] nu, output [9:0] nd,
+								input [9:0] l, input [9:0] r, input [9:0] u, input [9:0] d, 
+								input [9:0] w, input [9:0] h, input clk);
+								
+	bouncing_line l1(nl, nr, l, r, w, clk);
+	bouncing_line l2(nu, nd, u, d, h, clk);
+	
+endmodule

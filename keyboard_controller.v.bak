@@ -1,0 +1,13 @@
+module keyboard_controller(output reg [3:0] keys, input clk_50);
+
+
+	 keyboard_press_driver kpd(
+	  clk_50, 
+	  valid, makeBreak,
+	  output reg [7:0] outCode,
+	  input    PS2_DAT, // PS2 data line
+	  input    PS2_CLK, // PS2 clock line
+	  input reset
+	);
+
+endmodule 

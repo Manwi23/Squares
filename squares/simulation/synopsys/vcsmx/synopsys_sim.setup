@@ -1,0 +1,23 @@
+
+WORK > DEFAULT
+DEFAULT:                                ./libraries/work/                                  
+work:                                   ./libraries/work/                                  
+onchip_memory2_0_s1_translator:         ./libraries/onchip_memory2_0_s1_translator/        
+coordinator_0_avalon_master_translator: ./libraries/coordinator_0_avalon_master_translator/
+reset_from_locked:                      ./libraries/reset_from_locked/                     
+video_pll:                              ./libraries/video_pll/                             
+rst_controller:                         ./libraries/rst_controller/                        
+mm_interconnect_0:                      ./libraries/mm_interconnect_0/                     
+video_vga_controller_0:                 ./libraries/video_vga_controller_0/                
+video_pll_0:                            ./libraries/video_pll_0/                           
+pll_0:                                  ./libraries/pll_0/                                 
+onchip_memory2_0:                       ./libraries/onchip_memory2_0/                      
+coordinator_0:                          ./libraries/coordinator_0/                         
+altera_ver:                             ./libraries/altera_ver/                            
+lpm_ver:                                ./libraries/lpm_ver/                               
+sgate_ver:                              ./libraries/sgate_ver/                             
+altera_mf_ver:                          ./libraries/altera_mf_ver/                         
+altera_lnsim_ver:                       ./libraries/altera_lnsim_ver/                      
+cyclonev_ver:                           ./libraries/cyclonev_ver/                          
+cyclonev_hssi_ver:                      ./libraries/cyclonev_hssi_ver/                     
+cyclonev_pcie_hip_ver:                  ./libraries/cyclonev_pcie_hip_ver/                 

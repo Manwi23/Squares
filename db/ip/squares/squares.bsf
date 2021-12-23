@@ -1,0 +1,176 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 2019  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+*/
+(header "symbol" (version "1.1"))
+(symbol
+	(rect 0 0 304 408)
+	(text "squares" (rect 129 -1 160 11)(font "Arial" (font_size 10)))
+	(text "inst" (rect 8 392 20 404)(font "Arial" ))
+	(port
+		(pt 0 72)
+		(input)
+		(text "clk_clk" (rect 0 0 27 12)(font "Arial" (font_size 8)))
+		(text "clk_clk" (rect 4 61 46 72)(font "Arial" (font_size 8)))
+		(line (pt 0 72)(pt 96 72)(line_width 1))
+	)
+	(port
+		(pt 0 168)
+		(input)
+		(text "ps2_ps2_clk" (rect 0 0 50 12)(font "Arial" (font_size 8)))
+		(text "ps2_ps2_clk" (rect 4 157 70 168)(font "Arial" (font_size 8)))
+		(line (pt 0 168)(pt 96 168)(line_width 1))
+	)
+	(port
+		(pt 0 184)
+		(input)
+		(text "ps2_ps2_data" (rect 0 0 56 12)(font "Arial" (font_size 8)))
+		(text "ps2_ps2_data" (rect 4 173 76 184)(font "Arial" (font_size 8)))
+		(line (pt 0 184)(pt 96 184)(line_width 1))
+	)
+	(port
+		(pt 0 224)
+		(input)
+		(text "reset_reset_n" (rect 0 0 56 12)(font "Arial" (font_size 8)))
+		(text "reset_reset_n" (rect 4 213 82 224)(font "Arial" (font_size 8)))
+		(line (pt 0 224)(pt 96 224)(line_width 1))
+	)
+	(port
+		(pt 0 112)
+		(output)
+		(text "lights_leds[9..0]" (rect 0 0 60 12)(font "Arial" (font_size 8)))
+		(text "lights_leds[9..0]" (rect 4 101 106 112)(font "Arial" (font_size 8)))
+		(line (pt 0 112)(pt 96 112)(line_width 3))
+	)
+	(port
+		(pt 0 128)
+		(output)
+		(text "lights_hex[41..0]" (rect 0 0 63 12)(font "Arial" (font_size 8)))
+		(text "lights_hex[41..0]" (rect 4 117 106 128)(font "Arial" (font_size 8)))
+		(line (pt 0 128)(pt 96 128)(line_width 3))
+	)
+	(port
+		(pt 304 72)
+		(output)
+		(text "pll_0_locked_export" (rect 0 0 79 12)(font "Arial" (font_size 8)))
+		(text "pll_0_locked_export" (rect 203 61 317 72)(font "Arial" (font_size 8)))
+		(line (pt 304 72)(pt 192 72)(line_width 1))
+	)
+	(port
+		(pt 0 264)
+		(output)
+		(text "vga_CLK" (rect 0 0 41 12)(font "Arial" (font_size 8)))
+		(text "vga_CLK" (rect 4 253 46 264)(font "Arial" (font_size 8)))
+		(line (pt 0 264)(pt 96 264)(line_width 1))
+	)
+	(port
+		(pt 0 280)
+		(output)
+		(text "vga_HS" (rect 0 0 34 12)(font "Arial" (font_size 8)))
+		(text "vga_HS" (rect 4 269 40 280)(font "Arial" (font_size 8)))
+		(line (pt 0 280)(pt 96 280)(line_width 1))
+	)
+	(port
+		(pt 0 296)
+		(output)
+		(text "vga_VS" (rect 0 0 35 12)(font "Arial" (font_size 8)))
+		(text "vga_VS" (rect 4 285 40 296)(font "Arial" (font_size 8)))
+		(line (pt 0 296)(pt 96 296)(line_width 1))
+	)
+	(port
+		(pt 0 312)
+		(output)
+		(text "vga_BLANK" (rect 0 0 55 12)(font "Arial" (font_size 8)))
+		(text "vga_BLANK" (rect 4 301 58 312)(font "Arial" (font_size 8)))
+		(line (pt 0 312)(pt 96 312)(line_width 1))
+	)
+	(port
+		(pt 0 328)
+		(output)
+		(text "vga_SYNC" (rect 0 0 48 12)(font "Arial" (font_size 8)))
+		(text "vga_SYNC" (rect 4 317 52 328)(font "Arial" (font_size 8)))
+		(line (pt 0 328)(pt 96 328)(line_width 1))
+	)
+	(port
+		(pt 0 344)
+		(output)
+		(text "vga_R[7..0]" (rect 0 0 49 12)(font "Arial" (font_size 8)))
+		(text "vga_R[7..0]" (rect 4 333 70 344)(font "Arial" (font_size 8)))
+		(line (pt 0 344)(pt 96 344)(line_width 3))
+	)
+	(port
+		(pt 0 360)
+		(output)
+		(text "vga_G[7..0]" (rect 0 0 48 12)(font "Arial" (font_size 8)))
+		(text "vga_G[7..0]" (rect 4 349 70 360)(font "Arial" (font_size 8)))
+		(line (pt 0 360)(pt 96 360)(line_width 3))
+	)
+	(port
+		(pt 0 376)
+		(output)
+		(text "vga_B[7..0]" (rect 0 0 47 12)(font "Arial" (font_size 8)))
+		(text "vga_B[7..0]" (rect 4 365 70 376)(font "Arial" (font_size 8)))
+		(line (pt 0 376)(pt 96 376)(line_width 3))
+	)
+	(drawing
+		(text "clk" (rect 81 43 180 99)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "clk" (rect 101 67 220 144)(font "Arial" (color 0 0 0)))
+		(text "lights" (rect 66 83 168 179)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "leds" (rect 101 107 226 224)(font "Arial" (color 0 0 0)))
+		(text "hex" (rect 101 123 220 256)(font "Arial" (color 0 0 0)))
+		(text "pll_0_locked" (rect 193 43 458 99)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "export" (rect 162 67 360 144)(font "Arial" (color 0 0 0)))
+		(text "ps2" (rect 76 139 170 291)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "ps2_clk" (rect 101 163 244 336)(font "Arial" (color 0 0 0)))
+		(text "ps2_data" (rect 101 179 250 368)(font "Arial" (color 0 0 0)))
+		(text "reset" (rect 67 195 164 403)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "reset_n" (rect 101 219 244 448)(font "Arial" (color 0 0 0)))
+		(text "vga" (rect 77 235 172 483)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "CLK" (rect 101 259 220 528)(font "Arial" (color 0 0 0)))
+		(text "HS" (rect 101 275 214 560)(font "Arial" (color 0 0 0)))
+		(text "VS" (rect 101 291 214 592)(font "Arial" (color 0 0 0)))
+		(text "BLANK" (rect 101 307 232 624)(font "Arial" (color 0 0 0)))
+		(text "SYNC" (rect 101 323 226 656)(font "Arial" (color 0 0 0)))
+		(text "R" (rect 101 339 208 688)(font "Arial" (color 0 0 0)))
+		(text "G" (rect 101 355 208 720)(font "Arial" (color 0 0 0)))
+		(text "B" (rect 101 371 208 752)(font "Arial" (color 0 0 0)))
+		(text " squares " (rect 267 392 588 794)(font "Arial" ))
+		(line (pt 96 32)(pt 192 32)(line_width 1))
+		(line (pt 192 32)(pt 192 392)(line_width 1))
+		(line (pt 96 392)(pt 192 392)(line_width 1))
+		(line (pt 96 32)(pt 96 392)(line_width 1))
+		(line (pt 97 52)(pt 97 76)(line_width 1))
+		(line (pt 98 52)(pt 98 76)(line_width 1))
+		(line (pt 97 92)(pt 97 132)(line_width 1))
+		(line (pt 98 92)(pt 98 132)(line_width 1))
+		(line (pt 191 52)(pt 191 76)(line_width 1))
+		(line (pt 190 52)(pt 190 76)(line_width 1))
+		(line (pt 97 148)(pt 97 188)(line_width 1))
+		(line (pt 98 148)(pt 98 188)(line_width 1))
+		(line (pt 97 204)(pt 97 228)(line_width 1))
+		(line (pt 98 204)(pt 98 228)(line_width 1))
+		(line (pt 97 244)(pt 97 380)(line_width 1))
+		(line (pt 98 244)(pt 98 380)(line_width 1))
+		(line (pt 0 0)(pt 304 0)(line_width 1))
+		(line (pt 304 0)(pt 304 408)(line_width 1))
+		(line (pt 0 408)(pt 304 408)(line_width 1))
+		(line (pt 0 0)(pt 0 408)(line_width 1))
+	)
+)
