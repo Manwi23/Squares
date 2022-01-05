@@ -1,0 +1,34 @@
+module row_memory(
+	input [A-1:0] address_write,
+	input [S-1:0] data_write,
+	input clock_write,
+	input [A-1:0] address_read,
+	output [S-1:0] data_read,
+	input clock_read,
+	input swap
+);
+
+	parameter A = 9;
+	parameter S = 24;
+
+	reg swapped;
+	wire nswapped;
+	
+	wire [S-1:0] data_read_1;
+	wire [S-1:0] data_read_2;
+
+	initial begin
+		swapped <= 1'b1;
+	end
+	
+	assign nswapped = ~swapped;
+	assign data_read = nswapped ? data_read_1 : data_read_2;
+	
+	always @(clock_read) begin
+		if (swap) swapped <= nswapped;
+	end
+
+	mem #(.A(A), .S(S)) m1(address_write, data_write, clock_write, swapped, address_read, data_read_1, clock_read);
+	mem #(.A(A), .S(S)) m2(address_write, data_write, clock_write, nswapped, address_read, data_read_2, clock_read);
+
+endmodule

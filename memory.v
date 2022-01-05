@@ -8,10 +8,10 @@ module mem(
 	input clock_out
 );
 
-	parameter A = 10;
+	parameter A = 9;
 	parameter S = 24;
 
-	reg [S-1:0] memory [512];
+	reg [S-1:0] memory [1<<A];
 	
 	always @(posedge clock_out) begin
 		data_out <= memory[address_out];
