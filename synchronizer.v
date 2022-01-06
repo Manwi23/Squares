@@ -1,14 +1,14 @@
 module synchronizer_slow_to_fast(
 	input clk_out,
-	input [M:0] data_in,
-	output [M:0] data_out
+	input [M-1:0] data_in,
+	output [M-1:0] data_out
 );
 
 	parameter M = 15;
 
-	reg [M:0] middle0;
-	reg [M:0] middle1;
-	reg [M:0] middle2;
+	reg [M-1:0] middle0;
+	reg [M-1:0] middle1;
+	reg [M-1:0] middle2;
 	
 	initial begin
 		middle0 <= 0;

@@ -5,19 +5,19 @@ module vga_streamer(
 		output reg         avalon_streaming_source_valid,         //                        .valid
 		input  wire        avalon_streaming_source_ready,         //                        .ready
 		input  wire        clock_vga,                             //               clock_vga.clk
-		output reg 			 next_row,
-		output reg         next_screen,
+		output wire			 next_row,
+		output wire        next_screen,
 		input       [23:0] data,
-		output reg  [9:0]  address,
-		input              start;
+		output reg  [8:0]  address,
+		input              start
 );
 
-	integer max = 307200;
-	integer row = 640;
+	localparam [23:0] max = 307200;
+	localparam [9:0] row = 640;
 	integer start_drawing = 80;
 	integer end_drawing = 480;
-	integer signal_next_row = row - 40;
-	integer signal_next_screen = max - 100;
+	localparam [9:0] signal_next_row = row - 40;
+	localparam [23:0] signal_next_screen = max - 100;
 	
 	reg [19:0] counter;
 	reg [9:0] row_counter;
@@ -28,7 +28,7 @@ module vga_streamer(
 		counter <= 0;
 		row_counter <= 0;
 		avalon_streaming_source_valid <= 1'b1;
-		address <= 10'b0;
+		address <= 9'b0;
 	end
 	
 	assign avalon_streaming_source_startofpacket = start & !counter;

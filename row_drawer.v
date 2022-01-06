@@ -1,16 +1,17 @@
-module raw_drawer(
+module row_drawer(
 	output reg [7:0] address_read_ent,
 	input [20:0] data_read_ent,
 	input [7:0] entities_number,
 	output reg [8:0] address_write_row,
 	output reg [23:0] data_write_row,
+	output reg wren,
 	input swap,
 	input swap_screen,
 	input clk
 );
 	
-	integer one_entity_dir = 48;
-	integer one_entity_size = one_entity_dir * one_entity_dir;
+	localparam [5:0] one_entity_dir = 48;
+	localparam [9:0] one_entity_size = one_entity_dir * one_entity_dir;
 	integer row_number;
 	
 	reg ready;
@@ -31,6 +32,7 @@ module raw_drawer(
 			address_read_ent <= 0;
 			ready <= 1'b0;
 			entity_pixel_counter <= 6'b0;
+			wren <= 1'b0;
 			if (swap_screen) row_number <= 0;
 			else row_number <= row_number + 1;
 		end else if (address_read_ent < entities_number) begin
@@ -41,8 +43,12 @@ module raw_drawer(
 				if (entity_pixel_counter == one_entity_dir - 1) begin
 					entity_pixel_counter <= 6'b0;
 					ready <= 1'b0;
+					wren <= 1'b0;
 					address_read_ent <= address_read_ent + 1;
-				end else entity_pixel_counter <= entity_pixel_counter + 1;
+				end else begin
+					entity_pixel_counter <= entity_pixel_counter + 1;
+					wren <= 1'b1;
+				end
 			end else begin
 				if (row_number >= data_read_ent[20:12] & row_number < data_read_ent[20:12] + one_entity_dir) begin
 					address_read_rom <= data_read_ent[2:0] * one_entity_size 

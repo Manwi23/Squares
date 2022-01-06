@@ -1,0 +1,26 @@
+0 chlop na niczym
+1 skrzynka na niczym
+2 nic
+3 ---
+4 chlop na celu
+5 skrzynka na celu
+6 cel skrzynki
+7 sciana
+
+to nizej jest ok
+
+0 - puste
+1 - cel skrzynki
+2 - sciana
+3 - ---
+4 - chlop (domyslnie na niczym)
+5 - skrzynka (domyslnie na niczym)
+6 - skrzynka pod którą jest pole celu skrzynki
+7 - chlop pod ktorym jest pole celu skrzynki
+
+obrazki:
+0 nic
+1 skrzynka
+2 chlop
+3 sciana
+4 cel skrzynki

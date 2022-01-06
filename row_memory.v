@@ -1,7 +1,8 @@
-module row_memory(
+module double_memory(
 	input [A-1:0] address_write,
 	input [S-1:0] data_write,
 	input clock_write,
+	input wren,
 	input [A-1:0] address_read,
 	output [S-1:0] data_read,
 	input clock_read,
@@ -28,7 +29,7 @@ module row_memory(
 		if (swap) swapped <= nswapped;
 	end
 
-	mem #(.A(A), .S(S)) m1(address_write, data_write, clock_write, swapped, address_read, data_read_1, clock_read);
-	mem #(.A(A), .S(S)) m2(address_write, data_write, clock_write, nswapped, address_read, data_read_2, clock_read);
+	mem #(.A(A), .S(S)) m1(address_write, data_write, clock_write, swapped & wren, address_read, data_read_1, clock_read);
+	mem #(.A(A), .S(S)) m2(address_write, data_write, clock_write, nswapped & wren, address_read, data_read_2, clock_read);
 
 endmodule

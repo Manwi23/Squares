@@ -10,17 +10,17 @@
 
 `timescale 1 ps / 1 ps
 module screen_buffer (
-		input  wire        clock_vga,                             //                   clock.clk
 		input  wire        reset_reset,                           //                   reset.reset
-		input  wire        swap,                                  //             conduit_end.swap
-		input  wire [23:0] color,                                 //                        .color
-		input  wire [23:0] address,                               //                        .address
-		input  wire        clock_input,                           //                  clock2.clk
+		input  wire        conduit_end_clk,                       //             conduit_end.conduit_end_clk
+		input  wire        conduit_end_data,                      //                        .conduit_end_data
 		output wire [29:0] avalon_streaming_source_data,          // avalon_streaming_source.data
 		output wire        avalon_streaming_source_startofpacket, //                        .startofpacket
 		output wire        avalon_streaming_source_endofpacket,   //                        .endofpacket
 		output wire        avalon_streaming_source_valid,         //                        .valid
-		input  wire        avalon_streaming_source_ready          //                        .ready
+		input  wire        avalon_streaming_source_ready,         //                        .ready
+		input  wire        clock_vga,                             //                   clock.clk
+		input  wire        clock,                                 //                  clock2.clk
+		input  wire        clock_ps                               //                clock_ps.clk
 	);
 
 	// TODO: Auto-generated HDL template

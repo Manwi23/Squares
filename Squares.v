@@ -47,12 +47,9 @@ module Squares(
 
 squares mysquares(
 		CLOCK_50,       //   clk.clk
-		LEDR[9:0],   // lights.leds
-		{HEX5, HEX4, HEX3, HEX2, HEX1, HEX0},    //       .hex
-		1'b1,
-		PS2_CLK,   //   ps2.ps2_clk
-		PS2_DAT,  //      .ps2_data
-		1'b1, // reset.reset_n
+		PS2_CLK,        //   ps2.ps2_clk
+		PS2_DAT,        //      .ps2_data
+		1'b1,           // nreset
 		VGA_CLK,       //   vga.CLK
 		VGA_HS,        //      .HS
 		VGA_VS,        //      .VS
