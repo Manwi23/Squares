@@ -14,10 +14,10 @@ module vga_streamer(
 
 	localparam [23:0] max = 307200;
 	localparam [9:0] row = 640;
-	integer start_drawing = 80;
-	integer end_drawing = 480;
-	localparam [9:0] signal_next_row = row - 40;
-	localparam [23:0] signal_next_screen = max - 100;
+	localparam [9:0] start_drawing = 80;
+	localparam [9:0] end_drawing = row - start_drawing;
+	localparam [9:0] signal_next_row = row - 80;
+	localparam [23:0] signal_next_screen = max - row - 100;
 	
 	reg [19:0] counter;
 	reg [9:0] row_counter;
@@ -33,16 +33,18 @@ module vga_streamer(
 	
 	assign avalon_streaming_source_startofpacket = start & !counter;
 	assign avalon_streaming_source_endofpacket = (counter == max - 1);
-	assign next_screen = counter == signal_next_screen;
+	assign next_screen = (counter == signal_next_screen);
 	assign next_row = (row_counter == signal_next_row);
-	assign drawing = row_counter >= start_drawing & row_counter <= end_drawing;
+	assign drawing = (row_counter >= start_drawing) & (row_counter <= end_drawing);
 	
 	always @(posedge clock_vga) begin
 		if (start & avalon_streaming_source_ready) begin
 			if (drawing) begin
 				avalon_streaming_source_data <= {data[23:16], 2'b0, data[15:8], 2'b0, data[7:0], 2'b0};
 				address <= address + 1;
-			end else avalon_streaming_source_data <= 30'b0;
+			end else if (row_counter == start_drawing - 1) avalon_streaming_source_data <= 30'b111111111111111111111111111111;
+			else if (row_counter == end_drawing + 1) avalon_streaming_source_data <= 30'b111111111111111111111111111111;
+			else avalon_streaming_source_data <= 30'b000000000000000000000000000000;
 			
 			if (counter == max - 1) counter <= 0;
 			else counter <= counter + 1;

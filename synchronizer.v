@@ -25,3 +25,15 @@ module synchronizer_slow_to_fast(
 	end
 
 endmodule
+
+module posedge_detector(input clk, input data_in, output reg data_out);
+	initial begin
+		data_out <= 1'b0;
+	end
+	
+	always @(posedge clk) begin
+		if (data_in & ~data_out) data_out <= 1'b1;
+		else data_out <= 1'b0;
+	end
+	
+endmodule
