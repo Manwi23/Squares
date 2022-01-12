@@ -60,6 +60,14 @@ squares mysquares(
 		VGA_B          //      .B
 	);
 
+	assign HEX0 = 7'b1111111;
+	assign HEX1 = 7'b1111111;
+	assign HEX2 = 7'b1111111;
+	assign HEX3 = 7'b1111111;
+	assign HEX4 = 7'b1111111;
+	assign HEX5 = 7'b1111111;
+	
+	assign LEDR = 10'b0;
 
 
 endmodule

@@ -3,7 +3,7 @@ module entities_drawer(
 	output reg [20:0] data_write_ent,
 	output reg 	wren,
 	output reg [7:0] entities_number,
-	output reg [6:0] address_read_om,
+	output [6:0] address_read_om,
 	input [10:0] data_read_om,
 	input new_state,
 	input next_screen,
@@ -55,6 +55,7 @@ module entities_drawer(
 			entities_number <= 8'b0;
 			first_pass <= 1'b1;
 		end else if (drawing) begin
+			entities_number <= entities_number + 1;
 			address_write_ent <= address_write_ent + 1;
 			if (ent_type > 3 & first_pass) begin // tło, rysyjemy jak góra trochę odjechała
 				first_pass <= 1'b0;
