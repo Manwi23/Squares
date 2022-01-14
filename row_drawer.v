@@ -54,6 +54,7 @@ module row_drawer(
 		end else if (address_read_ent < entities_number) begin
 			if (ready & ~wait_for_rom) begin
 				data_write_row <= data_read_rom;
+//				data_write_row <= (data_read_rom < 10) ? 24'b111111110000000000000000 : data_read_rom;
 				address_read_rom <= address_read_rom + 1;
 				address_write_row <= start_col + entity_pixel_counter;
 				if (entity_pixel_counter == one_entity_dir - 1) begin
@@ -62,7 +63,10 @@ module row_drawer(
 					wait_for_read <= 1'b1;
 				end else begin
 					entity_pixel_counter <= entity_pixel_counter + 1;
-					wren <= 1'b1;
+					wren <= (data_read_rom == 0) ? 1'b0 : 1'b1;
+//					wren <= 1'b1;
+//					wren <= (ent_type == 3'd4) ? 1'b0 : 1'b1;
+//					wren <= 1'b0;
 				end
 			end else if (~wait_for_rom) begin
 				if ( (row_number >= start_row) & (row_number < (start_row + one_entity_dir)) & ~wait_for_read ) begin

@@ -15,8 +15,6 @@ module mem(
 	reg [S-1:0] memory [1<<A];
 	reg [((1<<A) - 1):0] holding_data;
 	
-	wire [A-1:0] zero = 0;
-	
 	initial begin
 		holding_data <= 0;
 	end

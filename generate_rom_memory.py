@@ -2,16 +2,21 @@ from PIL import Image
 import numpy as np
 
 figures = { # rgbcolor1, rgbcolor2
-    'blue' : [0, 0, 2**8 - 1, 0, 2**8 - 1, 0],
-    'red' : [2**8 - 1, 0, 0, 0, 2**8 - 1, 2**8 - 1],
-    'green' : [0, 2**8 - 1, 0, 2**8 - 1, 2**8 - 1, 0],
-    'white' : [2**8 - 1, 2**8 - 1, 2**8 - 1, 2**8 - 1,2**8 - 1, 2**8 - 1]
+    # 'blue' : [0, 0, 2**8 - 1, 0, 2**8 - 1, 0],
+    # 'red' : [2**8 - 1, 0, 0, 0, 2**8 - 1, 2**8 - 1],
+    # 'green' : [0, 2**8 - 1, 0, 2**8 - 1, 2**8 - 1, 0],
+    # 'white' : [2**8 - 1, 2**8 - 1, 2**8 - 1, 2**8 - 1,2**8 - 1, 2**8 - 1]
 }
 
 images = {
-    'heart' : np.array(Image.open("heart.bmp")),
-    'mo' : np.array(Image.open("mo.bmp")),
-    'km' : np.array(Image.open("km.bmp"))
+    # 'heart' : np.array(Image.open("heart.bmp")),
+    # 'mo' : np.array(Image.open("mo.bmp")),
+    # 'km' : np.array(Image.open("km.bmp"))
+    'dirt' : np.array(Image.open("images/dirt2.bmp")),
+    'box' : np.array(Image.open("images/box2.bmp")),
+    'cowboy' : np.array(Image.open("images/cowboy.bmp")),
+    'wall' : np.array(Image.open("images/wall.bmp")),
+    'goal' : np.array(Image.open("images/goal2.bmp")),
 }
 
 prefix = """DEPTH = 18432;                   -- The size of memory in words
