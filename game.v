@@ -31,12 +31,18 @@ module game (
 	wire [20:0] data_read_ent;
 	wire [7:0] address_read_ent;
 	wire [7:0] entities_number;
+	wire [6:0] address_read_om;
+	wire [10:0] data_read_om;
+	wire [7:0] address_write_ent;
+	wire [20:0] data_write_ent;
 	wire swap_row;
 	wire swap_screen;
 	wire next_row_detected;
 	wire next_screen_detected;
 	wire wren;
 	wire next_row_detected_vga;
+	wire wren_ent_mem;
+	wire new_state;
 	
 	wire start = 1'b1;
 	wire swapped;
@@ -79,10 +85,35 @@ module game (
 					  next_row_detected,
 					  clock);
 					  
-	dummy_entities de(address_read_ent,
-							data_read_ent,
-							entities_number,
-							clock);
+//	dummy_entities de(address_read_ent,
+//							data_read_ent,
+//							entities_number,
+//							clock);
+							
+	double_memory #(.A(8), .S(21)) d_ent(address_write_ent,
+													 data_write_ent,
+													 clock,
+													 wren_ent_mem,
+													 address_read_ent,
+													 data_read_ent,
+													 clock,
+													 next_screen_detected);
+													 
+	entities_drawer ent_drawer(address_write_ent,
+										data_write_ent,
+										wren_ent_mem,
+										entities_number,
+										address_read_om,
+										data_read_om,
+										new_state,
+										next_screen_detected,
+										clock);
+
+	dummy_om dom(address_read_om,
+					 data_read_om,
+					 new_state,
+					 next_screen_detected,
+					 clock);
 	
 
 endmodule

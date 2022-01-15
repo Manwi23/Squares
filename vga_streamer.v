@@ -17,7 +17,7 @@ module vga_streamer(
 	localparam [9:0] start_drawing = 80;
 	localparam [9:0] end_drawing = row - start_drawing;
 	localparam [9:0] signal_next_row = row - 80;
-	localparam [23:0] signal_next_screen = max - row - 90;
+	localparam [23:0] signal_next_screen = max - row - 400;
 	
 	reg [19:0] counter;
 	reg [9:0] row_counter;

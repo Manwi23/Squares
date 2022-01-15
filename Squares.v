@@ -67,7 +67,7 @@ squares mysquares(
 	assign HEX4 = 7'b1111111;
 	assign HEX5 = 7'b1111111;
 	
-	assign LEDR = 10'b0;
+//	assign LEDR = 10'b0;
 
 
 endmodule

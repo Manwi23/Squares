@@ -9,7 +9,7 @@ module dummy_entities(
 	
 	always @(posedge clk) begin
 		case (address_read_ent)
-		8'd0: data_read_ent <= {3'd3, 9'd0, 9'd0};
+			8'd0: data_read_ent <= {3'd3, 9'd0, 9'd0};
 			8'd1: data_read_ent <= {3'd3, 9'd0, 9'd48};
 			8'd2: data_read_ent <= {3'd3, 9'd0, 9'd96};
 			8'd3: data_read_ent <= {3'd3, 9'd0, 9'd144};
