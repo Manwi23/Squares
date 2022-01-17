@@ -1,4 +1,4 @@
-//Legal Notice: (C)2021 Altera Corporation. All rights reserved.  Your
+//Legal Notice: (C)2022 Altera Corporation. All rights reserved.  Your
 //use of Altera Corporation's design tools, logic functions and other
 //software and tools, and its AMPP partner logic functions, and any
 //output files any of the foregoing (including device programming or
@@ -39,9 +39,9 @@ module squares_onchip_memory2_0 (
   parameter INIT_FILE = "/home/kasia/Documents/9_semestr/fpga/systembuilder/CodeGenerated/DE1_SOC/Squares/memory.mif";
 
 
-  output  [ 15: 0] readdata;
-  input   [  8: 0] address;
-  input   [  1: 0] byteenable;
+  output  [ 31: 0] readdata;
+  input   [  7: 0] address;
+  input   [  3: 0] byteenable;
   input            chipselect;
   input            clk;
   input            clken;
@@ -49,11 +49,11 @@ module squares_onchip_memory2_0 (
   input            reset;
   input            reset_req;
   input            write;
-  input   [ 15: 0] writedata;
+  input   [ 31: 0] writedata;
 
 
 wire             clocken0;
-wire    [ 15: 0] readdata;
+wire    [ 31: 0] readdata;
 wire             wren;
   assign wren = chipselect & write;
   assign clocken0 = clken & ~reset_req;
@@ -71,16 +71,16 @@ wire             wren;
   defparam the_altsyncram.byte_size = 8,
            the_altsyncram.init_file = INIT_FILE,
            the_altsyncram.lpm_type = "altsyncram",
-           the_altsyncram.maximum_depth = 512,
-           the_altsyncram.numwords_a = 512,
+           the_altsyncram.maximum_depth = 256,
+           the_altsyncram.numwords_a = 256,
            the_altsyncram.operation_mode = "SINGLE_PORT",
            the_altsyncram.outdata_reg_a = "UNREGISTERED",
            the_altsyncram.ram_block_type = "M10K",
            the_altsyncram.read_during_write_mode_mixed_ports = "DONT_CARE",
            the_altsyncram.read_during_write_mode_port_a = "DONT_CARE",
-           the_altsyncram.width_a = 16,
-           the_altsyncram.width_byteena_a = 2,
-           the_altsyncram.widthad_a = 9;
+           the_altsyncram.width_a = 32,
+           the_altsyncram.width_byteena_a = 4,
+           the_altsyncram.widthad_a = 8;
 
   //s1, which is an e_avalon_slave
   //s2, which is an e_avalon_slave

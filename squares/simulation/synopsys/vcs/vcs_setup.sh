@@ -1,5 +1,5 @@
 
-# (C) 2001-2021 Altera Corporation. All rights reserved.
+# (C) 2001-2022 Altera Corporation. All rights reserved.
 # Your use of Altera Corporation's design tools, logic functions and 
 # other software and tools, and its AMPP partner logic functions, and 
 # any output files any of the foregoing (including device programming 
@@ -12,7 +12,7 @@
 # or its authorized distributors. Please refer to the applicable 
 # agreement for further details.
 
-# ACDS 19.1 670 linux 2021.12.22.15:55:11
+# ACDS 19.1 670 linux 2022.01.16.12:34:02
 
 # ----------------------------------------
 # vcs - auto-generated simulation script
@@ -94,12 +94,12 @@
 # within the Quartus project, and generate a unified
 # script which supports all the Altera IP within the design.
 # ----------------------------------------
-# ACDS 19.1 670 linux 2021.12.22.15:55:11
+# ACDS 19.1 670 linux 2022.01.16.12:34:02
 # ----------------------------------------
 # initialize variables
 TOP_LEVEL_NAME="squares"
 QSYS_SIMDIR="./../../"
-QUARTUS_INSTALL_DIR="/media/kasia/fpga/quartus/"
+QUARTUS_INSTALL_DIR="/home/kasia/intelFPGA_lite/19.1/quartus/"
 SKIP_FILE_COPY=0
 SKIP_SIM=0
 USER_DEFINED_ELAB_OPTIONS=""
@@ -143,19 +143,15 @@ vcs -lca -timescale=1ps/1ps -sverilog +verilog2001ext+.v -ntb_opts dtm $ELAB_OPT
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/cyclonev_hssi_atoms.v \
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/synopsys/cyclonev_pcie_hip_atoms_ncrypt.v \
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/cyclonev_pcie_hip_atoms.v \
-  $QSYS_SIMDIR/submodules/altera_merlin_slave_translator.sv \
-  $QSYS_SIMDIR/submodules/altera_merlin_master_translator.sv \
   $QSYS_SIMDIR/submodules/altera_up_avalon_reset_from_locked_signal.v \
   $QSYS_SIMDIR/submodules/squares_video_pll_0_video_pll.vo \
   $QSYS_SIMDIR/submodules/altera_reset_controller.v \
   $QSYS_SIMDIR/submodules/altera_reset_synchronizer.v \
-  $QSYS_SIMDIR/submodules/squares_mm_interconnect_0.v \
   $QSYS_SIMDIR/submodules/altera_up_avalon_video_vga_timing.v \
   $QSYS_SIMDIR/submodules/squares_video_vga_controller_0.v \
   $QSYS_SIMDIR/submodules/squares_video_pll_0.v \
   $QSYS_SIMDIR/submodules/squares_pll_0.vo \
-  $QSYS_SIMDIR/submodules/squares_onchip_memory2_0.v \
-  $QSYS_SIMDIR/submodules/coordinator.v \
+  $QSYS_SIMDIR/submodules/game.v \
   $QSYS_SIMDIR/squares.v \
   -top $TOP_LEVEL_NAME
 # ----------------------------------------

@@ -1,42 +1,33 @@
-# system info squares on 2021.12.22.15:55:09
+# system info squares on 2022.01.16.12:34:02
 system_info:
 name,value
 DEVICE,5CSEMA5F31C6
 DEVICE_FAMILY,Cyclone V
-GENERATION_ID,1640184859
+GENERATION_ID,1642332828
 #
 #
-# Files generated for squares on 2021.12.22.15:55:09
+# Files generated for squares on 2022.01.16.12:34:02
 files:
 filepath,kind,attributes,module,is_top
 simulation/squares.v,VERILOG,,squares,true
-simulation/submodules/coordinator.v,VERILOG,,coordinator,false
-simulation/submodules/squares_onchip_memory2_0.v,VERILOG,,squares_onchip_memory2_0,false
+simulation/submodules/game.v,VERILOG,,game,false
 simulation/submodules/squares_pll_0.vo,VERILOG,,squares_pll_0,false
 simulation/submodules/squares_video_pll_0.v,VERILOG,,squares_video_pll_0,false
 simulation/submodules/altera_up_avalon_video_vga_timing.v,VERILOG,,squares_video_vga_controller_0,false
 simulation/submodules/squares_video_vga_controller_0.v,VERILOG,,squares_video_vga_controller_0,false
-simulation/submodules/squares_mm_interconnect_0.v,VERILOG,,squares_mm_interconnect_0,false
 simulation/submodules/altera_reset_controller.v,VERILOG,,altera_reset_controller,false
 simulation/submodules/altera_reset_synchronizer.v,VERILOG,,altera_reset_controller,false
 simulation/submodules/altera_reset_controller.sdc,SDC,,altera_reset_controller,false
 simulation/submodules/squares_video_pll_0_video_pll.vo,VERILOG,,squares_video_pll_0_video_pll,false
 simulation/submodules/altera_up_avalon_reset_from_locked_signal.v,VERILOG,,altera_up_avalon_reset_from_locked_signal,false
-simulation/submodules/altera_merlin_master_translator.sv,SYSTEM_VERILOG,,altera_merlin_master_translator,false
-simulation/submodules/altera_merlin_slave_translator.sv,SYSTEM_VERILOG,,altera_merlin_slave_translator,false
 #
 # Map from instance-path to kind of module
 instances:
 instancePath,module
-squares.coordinator_0,coordinator
-squares.onchip_memory2_0,squares_onchip_memory2_0
+squares.game_0,game
 squares.pll_0,squares_pll_0
 squares.video_pll_0,squares_video_pll_0
 squares.video_pll_0.video_pll,squares_video_pll_0_video_pll
 squares.video_pll_0.reset_from_locked,altera_up_avalon_reset_from_locked_signal
 squares.video_vga_controller_0,squares_video_vga_controller_0
-squares.mm_interconnect_0,squares_mm_interconnect_0
-squares.mm_interconnect_0.coordinator_0_avalon_master_translator,altera_merlin_master_translator
-squares.mm_interconnect_0.onchip_memory2_0_s1_translator,altera_merlin_slave_translator
 squares.rst_controller,altera_reset_controller
-squares.rst_controller_001,altera_reset_controller

@@ -1,1 +1,0 @@
-Warning (10268): Verilog HDL information at keyboard_inner_driver.v(40): always construct contains both blocking and non-blocking assignments File: /home/kasia/Documents/9_semestr/fpga/systembuilder/CodeGenerated/DE1_SOC/Squares/keyboard_inner_driver.v Line: 40

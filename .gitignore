@@ -1,0 +1,17 @@
+Squares.*
+*.bak
+*.tcl*
+*_bb.v
+rom.qip
+rom_bb.v
+c5_pin_model_dump.txt
+incremental_db/
+db/
+\.qsys_edit/
+.greybox_tmp/
+
+
+
+
+
+!Squares.v
