@@ -8,8 +8,7 @@ module vga_streamer(
 		output wire			 next_row,
 		output wire        next_screen,
 		input       [23:0] data,
-		output reg  [8:0]  address,
-		input              start
+		output reg  [8:0]  address
 );
 
 	localparam [23:0] max = 307200;
@@ -31,14 +30,14 @@ module vga_streamer(
 		address <= 9'b0;
 	end
 	
-	assign avalon_streaming_source_startofpacket = start & !counter;
+	assign avalon_streaming_source_startofpacket = !counter;
 	assign avalon_streaming_source_endofpacket = (counter == max - 1);
 	assign next_screen = (counter == signal_next_screen);
 	assign next_row = (row_counter == signal_next_row);
 	assign drawing = (row_counter >= start_drawing) & (row_counter <= end_drawing);
 	
 	always @(posedge clock_vga) begin
-		if (start & avalon_streaming_source_ready) begin
+		if (avalon_streaming_source_ready) begin
 			if (drawing) begin
 				avalon_streaming_source_data <= {data[23:16], 2'b0, data[15:8], 2'b0, data[7:0], 2'b0};
 				address <= address + 9'b1;

@@ -1,14 +1,3 @@
-0 chlop na niczym
-1 skrzynka na niczym
-2 nic
-3 ---
-4 chlop na celu
-5 skrzynka na celu
-6 cel skrzynki
-7 sciana
-
-to nizej jest ok
-
 0 - puste
 1 - cel skrzynki
 2 - sciana

@@ -47,6 +47,8 @@ module Squares(
 
 squares mysquares(
 		CLOCK_50,       //   clk.clk
+		{HEX5, HEX4, HEX3, HEX2, HEX1, HEX0},
+		LEDR,
 		PS2_CLK,        //   ps2.ps2_clk
 		PS2_DAT,        //      .ps2_data
 		1'b1,           // nreset
@@ -60,12 +62,12 @@ squares mysquares(
 		VGA_B          //      .B
 	);
 
-	assign HEX0 = 7'b1111111;
-	assign HEX1 = 7'b1111111;
-	assign HEX2 = 7'b1111111;
-	assign HEX3 = 7'b1111111;
-	assign HEX4 = 7'b1111111;
-	assign HEX5 = 7'b1111111;
+//	assign HEX0 = 7'b1111111;
+//	assign HEX1 = 7'b1111111;
+//	assign HEX2 = 7'b1111111;
+//	assign HEX3 = 7'b1111111;
+//	assign HEX4 = 7'b1111111;
+//	assign HEX5 = 7'b1111111;
 	
 //	assign LEDR = 10'b0;
 

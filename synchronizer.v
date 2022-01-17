@@ -37,3 +37,15 @@ module posedge_detector(input clk, input data_in, output reg data_out);
 	end
 	
 endmodule
+
+module first_lit(input [3:0] data_in, output reg [3:0] data_out);
+	always @(data_in) begin
+		casez(data_in)
+			4'b1???: data_out = 4'b1000;
+			4'b01??: data_out = 4'b0100;
+			4'b001?: data_out = 4'b0010;
+			4'b0001: data_out = 4'b0001;
+			default: data_out = 4'b0000;
+		endcase
+	end
+endmodule
