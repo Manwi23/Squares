@@ -22,6 +22,7 @@ module game_logic(
 	reg [6:0] other_col;
 	reg wait_for_read;
 	reg game_begin_read_row;
+	reg game_begin_read_col;
 	reg [1:0] moved_cowboy_and_other;
 	reg [10:0] pos_other_for_calc;
 	reg [10:0] pos_cowboy_for_calc;
@@ -34,6 +35,8 @@ module game_logic(
 	reg cowboy_checked;
 	reg cowboy_read;
 	reg box_read;
+	reg [6:0] star_counter;
+	reg started_end;
 
 	reg [5:0] cooldown;
 	wire [3:0] kd;
@@ -52,6 +55,7 @@ module game_logic(
 	wire [6:0] cowboy_col_click;
 	wire [6:0] other_row_click;
 	wire [6:0] other_col_click;
+	wire game_end;
 	
 	assign next_cowboy_pos_normal = {pos_cowboy_for_calc[10:8], 
 												pos_cowboy_for_calc[7:2] + 6'b1,
@@ -71,20 +75,25 @@ module game_logic(
 	assign other_row_click = click_to_process[0] ? other_row -1 : (click_to_process[1] ? other_row + 1 : other_row);
 	assign other_col_click = click_to_process[3] ? other_col -1 : (click_to_process[2] ? other_col + 1 : other_col);
 	
+	assign game_end = (star_counter == 0);
+
 	initial begin
 		game_begin <= 1'b1;
 		wait_for_read <= 1'b1;
 		game_begin_read_row <= 1'b1;
+		game_begin_read_col <= 1'b1;
 		moved_cowboy_and_other <= 2'b0;
 		address_write_om <= 120;
 		kd_mem <= 4'b0;
+		star_counter <= 6'b1;
+		started_end <= 1'b0;
 	end
 
 	// dopisac gdzies jeszcze counter gwiazdek
 
 	// hextoseg h1(hexa[13:7], cowboy_row);
-	hextoseg h0(hexa[6:0], other_col[3:0]);
-	hextoseg h1(hexa[13:7], other_row[3:0]);
+	hextoseg h0(hexa[6:0], star_counter[3:0]);
+	hextoseg h1(hexa[13:7], star_counter[6:4]);
 	hextoseg h2(hexa[20:14], cowboy_col[3:0]);
 	hextoseg h3(hexa[27:21], cowboy_row[3:0]);
 	hextoseg h4(hexa[34:28], pos_cowboy_for_calc[10:8]);
@@ -100,6 +109,7 @@ module game_logic(
 	reg [9:0] counter_of_what;
 	
 	always @(posedge clk) begin
+
 		leds[9:0] <= counter_of_what;
 		if (game_begin) begin
 			if (next_screen) begin
@@ -117,16 +127,21 @@ module game_logic(
 						game_begin_read_row <= 1'b0;
 						address_read_om <= address_read_om + 1;
 						wait_for_read <= 1'b1;
-					end else begin 
+					end else if (game_begin_read_col) begin 
 						cowboy_col <= data_read_om;
+						address_read_om <= address_read_om + 1;
+						wait_for_read <= 1'b1;
+						game_begin_read_col <= 1'b0;
+					end else begin
 						game_begin <= 1'b0;
 						new_state <= 1'b1;
-						processing_next_screen <= 1'b0;
 						processing_click <= 1'b0;
+						star_counter <= data_read_om;
+						processing_next_screen <= 1'b0;
 					end
 				end
 			end
-		end else begin
+		end else if (~game_end | (game_end & moving_units)) begin
 			if (next_screen) processing_next_screen <= 1'b1;
 
 			if (moving_units & processing_next_screen) begin
@@ -231,6 +246,13 @@ module game_logic(
 																click_to_process[1] | click_to_process[2]};
 								processing_next_screen <= 1'b0;
 								new_state <= 1'b1;
+								
+								case({pos_other_for_calc[10:8], data_read_om[10:8]})
+									{3'd5, 3'd1}: star_counter <= star_counter - 1;
+									{3'd6, 3'd0}: star_counter <= star_counter + 1;
+									default: star_counter <= star_counter;
+								endcase
+
 							end else begin
 								processing_click <= 1'b0;
 								new_state <= 1'b1;
@@ -252,8 +274,29 @@ module game_logic(
 					end
 				end
 			end
+		end else begin //game_end
+			started_end <= 1'b1;
+			address_write_om <= 0;
+			data_write_om <= 0;
+			wren <= 1'b1;
+			if (started_end) begin
+				if (address_write_om < 99) begin
+					address_write_om <= address_write_om + 1;
+				end else begin
+					wren <= 1'b0;
+					new_state <= 1'b1;
+				end
+
+				if (address_write_om == 43) begin
+					data_write_om <= {3'b011, 8'b0};
+				end else begin
+					data_write_om <= 0;
+				end
+			end
 		end
 		
+		if (started_end & (address_write_om == 99) & next_screen) new_state <= 1'b1;
+
 		if (new_state) new_state <= 1'b0;
 		if (wait_for_read) wait_for_read <= 1'b0;
 
@@ -264,6 +307,5 @@ module game_logic(
 		end
 
 	end
-	
 
 endmodule

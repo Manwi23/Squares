@@ -13,6 +13,8 @@ board[cowboy[0]-1][cowboy[1]] = 5
 board[1][6] = 5
 board[7][7] = 5
 board[2][3] = 1
+board[1][3] = 1
+board[8][8] = 1
 
 # board = [[0]*10]*10
 
@@ -48,5 +50,13 @@ with open('op_memory.mif', 'w') as f:
         s = '0' * (16 - len(s)) + s
         f.write(a + " : " + s + ";\n")          
         cnt += 1
+
+    stars = sum([sum(map(lambda x: x == 1, i)) for i in board])
+    # print(stars)
+    a = str(hex(cnt))[2:].upper()
+    s = str(bin(stars))[2:].upper()
+    s = '0' * (16 - len(s)) + s
+    f.write(a + " : " + s + ";\n")          
+    cnt += 1
 
     f.write(sufix)

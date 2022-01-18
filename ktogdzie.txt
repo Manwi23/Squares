@@ -1,7 +1,7 @@
 0 - puste
 1 - cel skrzynki
 2 - sciana
-3 - ---
+3 - --- koniec
 4 - chlop (domyslnie na niczym)
 5 - skrzynka (domyslnie na niczym)
 6 - skrzynka pod którą jest pole celu skrzynki
@@ -13,3 +13,4 @@ obrazki:
 2 chlop
 3 sciana
 4 cel skrzynki
+5 koniec

@@ -84,7 +84,7 @@ module entities_drawer(
 						3'b000: data_write_ent <= {3'b000, new_pos_updown, new_pos_rightleft};
 						3'b001: data_write_ent <= {3'b100, new_pos_updown, new_pos_rightleft};
 						3'b010: data_write_ent <= {3'b011, new_pos_updown, new_pos_rightleft};
-						default: data_write_ent <= {3'b001, new_pos_updown, new_pos_rightleft}; // for test
+						default: data_write_ent <= {3'b101, new_pos_updown, new_pos_rightleft}; // game end
 					endcase
 					address_write_ent <= address_read_om;
 				end

@@ -17,6 +17,7 @@ images = {
     'cowboy' : np.array(Image.open("images/cowboy.bmp")),
     'wall' : np.array(Image.open("images/wall.bmp")),
     'goal' : np.array(Image.open("images/goal2.bmp")),
+    'youwon' : np.array(Image.open("images/youwon.bmp")),
 }
 
 prefix = """DEPTH = 18432;                   -- The size of memory in words

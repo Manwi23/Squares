@@ -15,8 +15,6 @@ module double_memory(
 	reg swapped;
 	wire nswapped;
 	
-	integer counter;
-	
 	wire [S-1:0] data_read_1;
 	wire [S-1:0] data_read_2;
 	
