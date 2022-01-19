@@ -9,7 +9,6 @@ incremental_db/
 db/
 \.qsys_edit/
 greybox_tmp/
-Squares_assignment_defaults.qdf
 
 !Squares.v
 
