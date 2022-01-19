@@ -1,0 +1,16 @@
+0 - empty field
+1 - box target
+2 - wall
+3 - --- (game end pic)
+4 - cowboy on an empty field
+5 - box on an empty field
+6 - box on box target
+7 - cowboy on box target
+
+obrazki:
+0 empty field (dirt)
+1 box
+2 cowboy
+3 wall
+4 box target
+5 game end pic
