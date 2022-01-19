@@ -1,23 +1,3 @@
-from PIL import Image
-import numpy as np
-
-cowboy = (5,5)
-
-board = [[2]*10] + [[2] + [0]*8 + [2]]*8 + [[2]*10]
-# board = [[2]*10] + [[2] + [2]*8 + [2]]*8 + [[2]*10]
-board = tuple([tuple(i) for i in board])
-board = [list(i) for i in board]
-board[cowboy[0]][cowboy[1]] = 4
-board[cowboy[0]+1][cowboy[1]] = 2
-board[cowboy[0]-1][cowboy[1]] = 5
-board[1][6] = 5
-board[7][7] = 5
-board[2][3] = 1
-board[1][3] = 1
-board[8][8] = 1
-
-# board = [[0]*10]*10
-
 prefix = """DEPTH = 128;                   -- The size of memory in words
 WIDTH = 16;                    -- The size of data in bits
 ADDRESS_RADIX = HEX;          -- The radix for address values
@@ -31,6 +11,17 @@ sufix = """
 
 END;"""
 
+board = []
+cowboy = None
+
+with open('initial_board.txt', 'r') as f:
+    for i in range(10):
+        l = f.readline()[:-1]
+        n = list(map(lambda x: int(x), l))
+        board += [n]
+        if 4 in n:
+            cowboy = i, n.index(4)
+
 with open('op_memory.mif', 'w') as f:
     f.write(prefix)
     cnt = 0
@@ -39,7 +30,6 @@ with open('op_memory.mif', 'w') as f:
         for j in range(10):
             a = str(hex(cnt))[2:].upper()
             s = str(bin(board[i][j] * 2**8))[2:].upper()
-            # print(board[i][j] * 2**8)
             s = '0' * (16 - len(s)) + s
             f.write(a + " : " + s + ";\n")          
             cnt += 1
@@ -52,7 +42,6 @@ with open('op_memory.mif', 'w') as f:
         cnt += 1
 
     stars = sum([sum(map(lambda x: x == 1, i)) for i in board])
-    # print(stars)
     a = str(hex(cnt))[2:].upper()
     s = str(bin(stars))[2:].upper()
     s = '0' * (16 - len(s)) + s

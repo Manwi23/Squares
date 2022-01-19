@@ -11,20 +11,12 @@ module keyboard_controller(output reg [3:0] keys, input clk_50, input clk_25, in
 	
 	wire [7:0] outCode;
 	wire valid, ifMake;
-	reg [23:0] codes;
 	
 	initial begin
-		codes <= 24'b0;
 		keys <= 4'b0;
 		code <= 8'b0;
 		newcode <= 1'b0;
 		ifMakereg <= 1'b0;
-	end
-	
-	always @(posedge clk_50) begin
-		if (valid) begin
-			codes <= {codes[15:0], outCode};
-		end
 	end
 	
 	keyboard_press_driver kpd(
