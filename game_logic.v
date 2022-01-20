@@ -15,36 +15,37 @@ module game_logic(
 	localparam [6:0] row = 10;
 	
 	reg game_begin;
+	reg wait_for_read;
+	reg game_begin_read_row;
+	reg game_begin_read_col;
+	reg cowboy_leaving_field_first_pass;
+	reg processing_next_screen;
+	reg processing_click;
+	reg cowboy_moving_to_box;
+	reg cowboy_checked;
+	reg cowboy_read;
+	reg box_read;
+	reg started_end;
+	reg moving_units;
+	reg only_moving_cowboy;
+
 	reg [6:0] ticks_left;
 	reg [6:0] cowboy_row;
 	reg [6:0] cowboy_col;
 	reg [6:0] other_row;
 	reg [6:0] other_col;
-	reg wait_for_read;
-	reg game_begin_read_row;
-	reg game_begin_read_col;
 	reg [1:0] moved_cowboy_and_other;
 	reg [10:0] pos_other_for_calc;
 	reg [10:0] pos_cowboy_for_calc;
 	reg [2:0] field_type_after;
-	reg cowboy_leaving_field_first_pass;
-	reg processing_next_screen;
-	reg processing_click;
 	reg [3:0] click_to_process;
-	reg cowboy_moving_to_box;
-	reg cowboy_checked;
-	reg cowboy_read;
-	reg box_read;
 	reg [6:0] star_counter;
-	reg started_end;
-
 	reg [5:0] cooldown;
-	wire [3:0] kd;
-	wire [3:0] kd_one;
 	reg [3:0] kd_mem;
-	reg moving_units;
-	reg only_moving_cowboy;
+	reg [9:0] counter_of_what;
 	
+	wire game_end;
+
 	wire [10:0] next_cowboy_pos_normal;
 	wire [10:0] next_other_pos_normal;
 	wire [6:0] cowboy_row_new;
@@ -55,7 +56,8 @@ module game_logic(
 	wire [6:0] cowboy_col_click;
 	wire [6:0] other_row_click;
 	wire [6:0] other_col_click;
-	wire game_end;
+	wire [3:0] kd;
+	wire [3:0] kd_one;
 	
 	assign next_cowboy_pos_normal = {pos_cowboy_for_calc[10:8], 
 												pos_cowboy_for_calc[7:2] + 6'b1,
@@ -69,7 +71,6 @@ module game_logic(
 	assign other_row_new = pos_other_for_calc[1] ? (pos_other_for_calc[0] ? (other_row + 1) : (other_row - 1)) : other_row;
 	assign other_col_new = ~(pos_other_for_calc[1]) ? (pos_other_for_calc[0] ? (other_col + 1) : (other_col - 1)) : other_col;
 	
-	// up down right left 0123
 	assign cowboy_row_click = click_to_process[0] ? cowboy_row - 1 : (click_to_process[1] ? cowboy_row + 1 : cowboy_row);
 	assign cowboy_col_click = click_to_process[3] ? cowboy_col -1 : (click_to_process[2] ? cowboy_col + 1 : cowboy_col);
 	assign other_row_click = click_to_process[0] ? other_row -1 : (click_to_process[1] ? other_row + 1 : other_row);
@@ -89,9 +90,6 @@ module game_logic(
 		started_end <= 1'b0;
 	end
 
-	// dopisac gdzies jeszcze counter gwiazdek
-
-	// hextoseg h1(hexa[13:7], cowboy_row);
 	hextoseg h0(hexa[6:0], star_counter[3:0]);
 	hextoseg h1(hexa[13:7], star_counter[6:4]);
 	hextoseg h2(hexa[20:14], cowboy_col[3:0]);
@@ -105,8 +103,6 @@ module game_logic(
 	posedge_detector p3(clk, keys[3], kd[3]);
 
 	first_lit fl(kd, kd_one);
-
-	reg [9:0] counter_of_what;
 	
 	always @(posedge clk) begin
 
@@ -188,7 +184,7 @@ module game_logic(
 					end
 				end else begin
 					wren <= 1'b0;
-					address_write_om <= 120;
+					address_write_om <= 7'd120;
 					moving_units <= (only_moving_cowboy ? (pos_cowboy_for_calc[7:2] < 48) : (pos_other_for_calc[7:2] < 48));
 					moved_cowboy_and_other <= {~(pos_cowboy_for_calc[7:2] < 48), 
 												only_moving_cowboy | (~only_moving_cowboy & ~(pos_other_for_calc[7:2] < 48))}; // ???
@@ -197,7 +193,7 @@ module game_logic(
 				end
 
 			end else begin
-				if (processing_click) begin // up down right left 0123
+				if (processing_click) begin
 					if (~wait_for_read) begin
 						if (~cowboy_checked) begin
 							pos_cowboy_for_calc[10:8] <= data_read_om[10:8];
@@ -210,11 +206,11 @@ module game_logic(
 							cowboy_read <= 1'b0;
 							wait_for_read <= 1'b1;
 						end else if (~cowboy_read) begin
-							if (data_read_om[10:8] == 2) begin // sciana
+							if (data_read_om[10:8] == 2) begin // wall
 								processing_click <= 1'b0;
 								new_state <= 1'b1;
 								processing_next_screen <= 1'b0;
-							end else if ((data_read_om[10:8] == 0) | (data_read_om[10:8] == 1)) begin // puste
+							end else if ((data_read_om[10:8] == 0) | (data_read_om[10:8] == 1)) begin // empty field
 								moved_cowboy_and_other[0] <= 1'b1;
 								moving_units <= 1'b1;
 								pos_other_for_calc[10:8] <= data_read_om[10:8];
@@ -225,7 +221,7 @@ module game_logic(
 								only_moving_cowboy <= 1'b1;
 								processing_next_screen <= 1'b0;
 								new_state <= 1'b1;
-							end else begin // skrzynka
+							end else begin // box
 								address_read_om <= other_row_click * row + other_col_click;
 								wait_for_read <= 1'b1;
 								box_read <= 1'b0;
@@ -233,7 +229,7 @@ module game_logic(
 								cowboy_read <= 1'b1;
 							end
 						end else if (~box_read) begin
-							if ((data_read_om[10:8] == 0) | (data_read_om[10:8] == 1)) begin // skrzynka jedzie na puste
+							if ((data_read_om[10:8] == 0) | (data_read_om[10:8] == 1)) begin // box moving to an empty field
 								field_type_after <= data_read_om[10:8];
 								processing_click <= 1'b0;
 								moving_units <= 1'b1;
@@ -253,7 +249,7 @@ module game_logic(
 									default: star_counter <= star_counter;
 								endcase
 
-							end else begin
+							end else begin // box can't move
 								processing_click <= 1'b0;
 								new_state <= 1'b1;
 								processing_next_screen <= 1'b0;
@@ -274,14 +270,14 @@ module game_logic(
 					end
 				end
 			end
-		end else begin //game_end
+		end else begin // game_end
 			started_end <= 1'b1;
 			address_write_om <= 0;
 			data_write_om <= 0;
 			wren <= 1'b1;
 			if (started_end) begin
 				if (address_write_om < 99) begin
-					address_write_om <= address_write_om + 1;
+					address_write_om <= address_write_om + 7'b1;
 				end else begin
 					wren <= 1'b0;
 					new_state <= 1'b1;

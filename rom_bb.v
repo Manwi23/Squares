@@ -4,7 +4,7 @@
 // MODULE: altsyncram 
 
 // ============================================================
-// File Name: romv2.v
+// File Name: rom.v
 // Megafunction Name(s):
 // 			altsyncram
 //
@@ -32,7 +32,7 @@
 //refer to the applicable agreement for further details, at
 //https://fpgasoftware.intel.com/eula.
 
-module romv2 (
+module rom (
 	address,
 	clock,
 	q);
@@ -103,10 +103,10 @@ endmodule
 // Retrieval info: CONNECT: @address_a 0 0 15 0 address 0 0 15 0
 // Retrieval info: CONNECT: @clock0 0 0 0 0 clock 0 0 0 0
 // Retrieval info: CONNECT: q 0 0 24 0 @q_a 0 0 24 0
-// Retrieval info: GEN_FILE: TYPE_NORMAL romv2.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL romv2.inc FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL romv2.cmp FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL romv2.bsf FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL romv2_inst.v FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL romv2_bb.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL rom.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL rom.inc FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL rom.cmp FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL rom.bsf FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL rom_inst.v FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL rom_bb.v TRUE
 // Retrieval info: LIB_FILE: altera_mf

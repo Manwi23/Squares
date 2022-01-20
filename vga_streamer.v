@@ -15,8 +15,8 @@ module vga_streamer(
 	localparam [9:0] row = 640;
 	localparam [9:0] start_drawing = 80;
 	localparam [9:0] end_drawing = row - start_drawing;
-	localparam [9:0] signal_next_row = row - 80;
-	localparam [23:0] signal_next_screen = max - row - 400;
+	localparam [9:0] signal_next_row = row - 10'd80;
+	localparam [23:0] signal_next_screen = max - row - 24'd400;
 	
 	reg [19:0] counter;
 	reg [9:0] row_counter;
@@ -45,13 +45,13 @@ module vga_streamer(
 			else if (row_counter == end_drawing + 1) avalon_streaming_source_data <= 30'b111111111111111111111111111111;
 			else avalon_streaming_source_data <= 30'b000000000000000000000000000000;
 			
-			if (counter == max - 1) counter <= 0;
-			else counter <= counter + 1;
+			if (counter == max - 1) counter <= 20'd0;
+			else counter <= counter + 20'd1;
 			
 			if (row_counter == row - 1) begin
 				row_counter <= 0;
 				address <= 0;
-			end else row_counter <= row_counter + 1;
+			end else row_counter <= row_counter + 10'd1;
 			
 		end
 	end

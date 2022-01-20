@@ -14,8 +14,6 @@ module entities_drawer(
 	localparam [8:0] one_entity_dir = 48;
 	localparam [5:0] row_dir = 10;
 	
-	reg [8:0] row_address;
-	reg [8:0] col_address;
 	wire [8:0] shift_up;
 	wire [8:0] shift_down;
 	wire [8:0] shift_left;
@@ -31,6 +29,8 @@ module entities_drawer(
 	reg first_pass;
 	reg wait_for_read;
 	reg next_end;
+	reg [8:0] row_address;
+	reg [8:0] col_address;
 	
 	initial begin
 		entities_number <= 8'b0;
@@ -64,7 +64,7 @@ module entities_drawer(
 		end else if (drawing & ~next_end) begin
 			if (~wait_for_read) begin
 				wren <= 1'b1;
-				if ((ent_type > 3) & first_pass) begin // tło
+				if ((ent_type > 3) & first_pass) begin // background
 					if (ent_type > 5) begin 
 						data_write_ent <= {3'b100, place_in_row, place_in_col};
 					end else begin
@@ -78,7 +78,7 @@ module entities_drawer(
 						data_write_ent <= {3'b001, new_pos_updown, new_pos_rightleft};
 					end
 					address_write_ent <= entities_number;
-					entities_number <= entities_number + 1;
+					entities_number <= entities_number + 8'd1;
 				end else begin
 					case (ent_type) 
 						3'b000: data_write_ent <= {3'b000, new_pos_updown, new_pos_rightleft};
@@ -94,10 +94,10 @@ module entities_drawer(
 				end else begin
 					if ((ent_type < 4) | ((ent_type > 3) & ~first_pass)) begin
 						if (col_address < 9) begin
-							col_address <= col_address + 1;
+							col_address <= col_address + 9'b1;
 						end else begin
-							col_address <= 0;
-							row_address <= row_address + 1;
+							col_address <= 9'b0;
+							row_address <= row_address + 9'b1;
 						end
 						wait_for_read <= 1'b1;
 						first_pass <= 1'b1;
@@ -113,8 +113,8 @@ module entities_drawer(
 		end else if (next_end) begin
 			drawing <= 1'b0;
 			wren <= 1'b0;
-			col_address <= 0;
-			row_address <= 0;
+			col_address <= 9'b0;
+			row_address <= 9'b0;
 		end
 		
 	end
