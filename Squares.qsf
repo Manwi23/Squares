@@ -304,7 +304,6 @@ set_global_assignment -name QSYS_FILE squares.qsys
 set_global_assignment -name VERILOG_FILE Squares.v
 set_global_assignment -name VERILOG_FILE keyboard_press_driver.v
 set_global_assignment -name VERILOG_FILE hextoseg.v
-set_global_assignment -name VERILOG_FILE lights.v
 set_global_assignment -name VERILOG_FILE keyboard_inner_driver.v
 set_global_assignment -name SDC_FILE Squares.sdc
 set_global_assignment -name VERILOG_FILE keyboard_controller.v

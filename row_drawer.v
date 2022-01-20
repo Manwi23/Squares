@@ -13,20 +13,18 @@ module row_drawer(
 	localparam [14:0] one_entity_size = one_entity_dir * one_entity_dir;
 	localparam [8:0] max_row = 480;
 	
-	reg [8:0] row_number;
-	
 	wire [8:0] start_row;
 	wire [8:0] start_col;
 	wire [2:0] ent_type;
+	wire [23:0] data_read_rom;
+	
+	reg [14:0] address_read_rom;
+	reg [8:0] entity_pixel_counter;
+	reg [8:0] row_number;
 	
 	reg ready;
-	reg [14:0] address_read_rom;
-	wire [23:0] data_read_rom;
-	reg [8:0] entity_pixel_counter;
 	reg wait_for_read;
 	reg wait_for_rom;
-	
-	rom rommemory(address_read_rom, clk, data_read_rom);
 	
 	initial begin
 		address_read_rom <= 15'b0;
@@ -36,6 +34,8 @@ module row_drawer(
 		wait_for_read <= 1'b0;
 		wait_for_rom <= 1'b0;
 	end
+
+	rom rommemory(address_read_rom, clk, data_read_rom);
 	
 	assign start_row = data_read_ent[17:9];
 	assign start_col = data_read_ent[8:0];
