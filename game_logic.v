@@ -1,14 +1,14 @@
 module game_logic(
-	output reg [6:0] address_write_om,
-	output reg [10:0] data_write_om,
-	output reg wren,
+	output wire [6:0] address_write_om,
+	output wire [10:0] data_write_om,
+	output wire wren,
 	output reg [6:0] address_read_om,
 	input [10:0] data_read_om,
 	input next_screen,
 	output reg new_state,
 	input [3:0] keys,
 	input clk,
-	output reg [9:0] leds,
+	output wire [9:0] leds,
 	output wire [41:0] hexa
 );
 	
@@ -28,13 +28,13 @@ module game_logic(
 	reg started_end;
 	reg moving_units;
 	reg only_moving_cowboy;
+	reg process_move;
+	reg wren_gl;
 
-	reg [6:0] ticks_left;
 	reg [6:0] cowboy_row;
 	reg [6:0] cowboy_col;
 	reg [6:0] other_row;
 	reg [6:0] other_col;
-	reg [1:0] moved_cowboy_and_other;
 	reg [10:0] pos_other_for_calc;
 	reg [10:0] pos_cowboy_for_calc;
 	reg [2:0] field_type_after;
@@ -43,51 +43,46 @@ module game_logic(
 	reg [5:0] cooldown;
 	reg [3:0] kd_mem;
 	reg [9:0] counter_of_what;
+	reg [6:0] address_write_om_gl;
+	reg [10:0] data_write_om_gl;
 	
 	wire game_end;
+	wire wren_ent_mv;
+	wire new_state_ready;
+	wire move_done;
 
-	wire [10:0] next_cowboy_pos_normal;
-	wire [10:0] next_other_pos_normal;
-	wire [6:0] cowboy_row_new;
-	wire [6:0] cowboy_col_new;
-	wire [6:0] other_row_new;
-	wire [6:0] other_col_new;
 	wire [6:0] cowboy_row_click;
 	wire [6:0] cowboy_col_click;
 	wire [6:0] other_row_click;
 	wire [6:0] other_col_click;
 	wire [3:0] kd;
-	wire [3:0] kd_one;
-	
-	assign next_cowboy_pos_normal = {pos_cowboy_for_calc[10:8], 
-												pos_cowboy_for_calc[7:2] + 6'b1,
-												pos_cowboy_for_calc[1:0]};					
-	assign next_other_pos_normal =  {pos_other_for_calc[10:8], 
-												pos_other_for_calc[7:2] + 6'b1,
-												pos_other_for_calc[1:0]};										
-	
-	assign cowboy_row_new = pos_cowboy_for_calc[1] ? (pos_cowboy_for_calc[0] ? (cowboy_row + 1) : (cowboy_row - 1)) : cowboy_row;
-	assign cowboy_col_new = ~(pos_cowboy_for_calc[1]) ? (pos_cowboy_for_calc[0] ? (cowboy_col + 1) : (cowboy_col - 1)) : cowboy_col;
-	assign other_row_new = pos_other_for_calc[1] ? (pos_other_for_calc[0] ? (other_row + 1) : (other_row - 1)) : other_row;
-	assign other_col_new = ~(pos_other_for_calc[1]) ? (pos_other_for_calc[0] ? (other_col + 1) : (other_col - 1)) : other_col;
-	
+	wire [3:0] kd_one;		
+	wire [6:0] cowboy_row_out;
+	wire [6:0] cowboy_col_out;
+	wire [6:0] address_write_om_ent_mv;
+	wire [10:0] data_write_om_ent_mv;
+							
 	assign cowboy_row_click = click_to_process[0] ? cowboy_row - 1 : (click_to_process[1] ? cowboy_row + 1 : cowboy_row);
 	assign cowboy_col_click = click_to_process[3] ? cowboy_col -1 : (click_to_process[2] ? cowboy_col + 1 : cowboy_col);
 	assign other_row_click = click_to_process[0] ? other_row -1 : (click_to_process[1] ? other_row + 1 : other_row);
-	assign other_col_click = click_to_process[3] ? other_col -1 : (click_to_process[2] ? other_col + 1 : other_col);
-	
+	assign other_col_click = click_to_process[3] ? other_col -1 : (click_to_process[2] ? other_col + 1 : other_col);	
+
 	assign game_end = (star_counter == 0);
+
+	assign address_write_om = (process_move ? address_write_om_ent_mv : address_write_om_gl);
+	assign data_write_om = (process_move ? data_write_om_ent_mv : data_write_om_gl);
+	assign wren = (process_move ? wren_ent_mv : wren_gl);
 
 	initial begin
 		game_begin <= 1'b1;
 		wait_for_read <= 1'b1;
 		game_begin_read_row <= 1'b1;
 		game_begin_read_col <= 1'b1;
-		moved_cowboy_and_other <= 2'b0;
-		address_write_om <= 120;
+		address_write_om_gl <= 120;
 		kd_mem <= 4'b0;
 		star_counter <= 6'b1;
 		started_end <= 1'b0;
+		process_move <= 1'b0;
 	end
 
 	hextoseg h0(hexa[6:0], star_counter[3:0]);
@@ -103,10 +98,27 @@ module game_logic(
 	posedge_detector p3(clk, keys[3], kd[3]);
 
 	first_lit fl(kd, kd_one);
+
+	entities_mover ent_mover(address_write_om_ent_mv,
+							data_write_om_ent_mv,
+							wren_ent_mv,
+							cowboy_row_out,
+							cowboy_col_out,
+    						new_state_ready,
+							move_done,
+							cowboy_row,
+							cowboy_col,
+    						pos_cowboy_for_calc,
+							other_row,
+							other_col,
+							pos_other_for_calc,
+							only_moving_cowboy,
+							process_move,
+							field_type_after,
+							clk,
+							leds);
 	
 	always @(posedge clk) begin
-
-		leds[9:0] <= counter_of_what;
 		if (game_begin) begin
 			if (next_screen) begin
 				cooldown <= {cooldown[4:0], 1'b1};
@@ -141,59 +153,20 @@ module game_logic(
 			if (next_screen) processing_next_screen <= 1'b1;
 
 			if (moving_units & processing_next_screen) begin
-				if (~(moved_cowboy_and_other[1])) begin
-					if (pos_cowboy_for_calc[7:2] < 47) begin
-						data_write_om <= next_cowboy_pos_normal;
-						pos_cowboy_for_calc[7:0] <= next_cowboy_pos_normal[7:0];
-						address_write_om <= cowboy_row * row + cowboy_col;
-						wren <= 1'b1;
-						cowboy_leaving_field_first_pass <= 1'b1;
-						moved_cowboy_and_other[1] <= 1'b1;
-					end else begin
-						if (cowboy_leaving_field_first_pass) begin
-							data_write_om <= {(pos_cowboy_for_calc[10:8] == 3'd4) ? 3'b0 : 3'b1, 6'b0, 1'b0, 1'b0};
-							address_write_om <= cowboy_row * row + cowboy_col;
-							wren <= 1'b1;
-							cowboy_leaving_field_first_pass <= 1'b0;
-							pos_cowboy_for_calc[7:0] <= next_cowboy_pos_normal[7:0];
-						end else begin
-							data_write_om <= {((pos_other_for_calc[10:8] == 3'd5) | (pos_other_for_calc[10:8] == 3'd0)) ? 3'd4 : 3'd7, 6'b0, 1'b0, 1'b0};
-							address_write_om <= cowboy_row_new * row + cowboy_col_new;
-							cowboy_row <= cowboy_row_new;
-							cowboy_col <= cowboy_col_new;
-							counter_of_what <= counter_of_what + 1;
-							wren <= 1'b1;
-							moved_cowboy_and_other[1] <= 1'b1;
-						end
-					end
-				end else if (~moved_cowboy_and_other[0]) begin
-					if (pos_other_for_calc[7:2] < 47) begin
-						data_write_om <= next_other_pos_normal;
-						pos_other_for_calc[7:0] <= next_other_pos_normal[7:0];
-						address_write_om <= other_row * row + other_col;
-						wren <= 1'b1;
-						moved_cowboy_and_other[0] <= 1'b1;
-					end else begin
-						data_write_om <= {(field_type_after == 3'b0) ? 3'd5 : 3'd6, 6'b0, 1'b0, 1'b0};
-						address_write_om <= other_row_new * row + other_col_new;
-						other_row <= other_row_new;
-						other_col <= other_col_new;
-						pos_other_for_calc[7:0] <= next_other_pos_normal[7:0];
-						wren <= 1'b1;
-						moved_cowboy_and_other[0] <= 1'b1;
-					end
-				end else begin
-					wren <= 1'b0;
-					address_write_om <= 7'd120;
-					moving_units <= (only_moving_cowboy ? (pos_cowboy_for_calc[7:2] < 48) : (pos_other_for_calc[7:2] < 48));
-					moved_cowboy_and_other <= {~(pos_cowboy_for_calc[7:2] < 48), 
-												only_moving_cowboy | (~only_moving_cowboy & ~(pos_other_for_calc[7:2] < 48))}; // ???
-					processing_next_screen <= 1'b0;
+				process_move <= 1'b1;
+				if (new_state_ready) begin
+					process_move <= 1'b0;
 					new_state <= 1'b1;
+					processing_next_screen <= 1'b0;
+					if (move_done) begin
+						moving_units <= 1'b0;
+						cowboy_row <= cowboy_row_out;
+						cowboy_col <= cowboy_col_out;
+					end
 				end
-
 			end else begin
 				if (processing_click) begin
+					// leds[0] <= 1'b1;
 					if (~wait_for_read) begin
 						if (~cowboy_checked) begin
 							pos_cowboy_for_calc[10:8] <= data_read_om[10:8];
@@ -211,7 +184,6 @@ module game_logic(
 								new_state <= 1'b1;
 								processing_next_screen <= 1'b0;
 							end else if ((data_read_om[10:8] == 0) | (data_read_om[10:8] == 1)) begin // empty field
-								moved_cowboy_and_other[0] <= 1'b1;
 								moving_units <= 1'b1;
 								pos_other_for_calc[10:8] <= data_read_om[10:8];
 								pos_cowboy_for_calc[7:0] <= {6'b0, 
@@ -242,7 +214,6 @@ module game_logic(
 																click_to_process[1] | click_to_process[2]};
 								processing_next_screen <= 1'b0;
 								new_state <= 1'b1;
-								
 								case({pos_other_for_calc[10:8], data_read_om[10:8]})
 									{3'd5, 3'd1}: star_counter <= star_counter - 1;
 									{3'd6, 3'd0}: star_counter <= star_counter + 1;
@@ -272,26 +243,26 @@ module game_logic(
 			end
 		end else begin // game_end
 			started_end <= 1'b1;
-			address_write_om <= 0;
-			data_write_om <= 0;
-			wren <= 1'b1;
+			address_write_om_gl <= 0;
+			data_write_om_gl <= 0;
+			wren_gl <= 1'b1;
 			if (started_end) begin
-				if (address_write_om < 99) begin
-					address_write_om <= address_write_om + 7'b1;
+				if (address_write_om_gl < 99) begin
+					address_write_om_gl <= address_write_om_gl + 7'b1;
 				end else begin
-					wren <= 1'b0;
+					wren_gl <= 1'b0;
 					new_state <= 1'b1;
 				end
 
-				if (address_write_om == 43) begin
-					data_write_om <= {3'b011, 8'b0};
+				if (address_write_om_gl == 43) begin
+					data_write_om_gl <= {3'b011, 8'b0};
 				end else begin
-					data_write_om <= 0;
+					data_write_om_gl <= 0;
 				end
 			end
 		end
 		
-		if (started_end & (address_write_om == 99) & next_screen) new_state <= 1'b1;
+		if (started_end & (address_write_om_gl == 99) & next_screen) new_state <= 1'b1;
 
 		if (new_state) new_state <= 1'b0;
 		if (wait_for_read) wait_for_read <= 1'b0;
