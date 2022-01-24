@@ -6,8 +6,10 @@ module game_logic(
 	input [10:0] data_read_om,
 	input next_screen,
 	output reg new_state,
-	input [3:0] keys,
+	input [3:0] keyboard_keys,
 	input clk,
+	input  wire [3:0] keys,
+    input  wire [9:0] switches,
 	output wire [9:0] leds,
 	output wire [41:0] hexa
 );
@@ -30,6 +32,9 @@ module game_logic(
 	reg only_moving_cowboy;
 	reg process_move;
 	reg wren_gl;
+	reg new_game_pending;
+	reg new_game_in_progress;
+	reg new_game_waiting;
 
 	reg [6:0] cowboy_row;
 	reg [6:0] cowboy_col;
@@ -48,8 +53,12 @@ module game_logic(
 	
 	wire game_end;
 	wire wren_ent_mv;
+	wire wren_ngc;
 	wire new_state_ready;
 	wire move_done;
+	wire new_game_request;
+	wire new_game_ready;
+	wire resetting;
 
 	wire [6:0] cowboy_row_click;
 	wire [6:0] cowboy_col_click;
@@ -61,17 +70,19 @@ module game_logic(
 	wire [6:0] cowboy_col_out;
 	wire [6:0] address_write_om_ent_mv;
 	wire [10:0] data_write_om_ent_mv;
+	wire [6:0] address_write_om_ngc;
+	wire [10:0] data_write_om_ngc;
 							
 	assign cowboy_row_click = click_to_process[0] ? cowboy_row - 1 : (click_to_process[1] ? cowboy_row + 1 : cowboy_row);
 	assign cowboy_col_click = click_to_process[3] ? cowboy_col -1 : (click_to_process[2] ? cowboy_col + 1 : cowboy_col);
 	assign other_row_click = click_to_process[0] ? other_row -1 : (click_to_process[1] ? other_row + 1 : other_row);
 	assign other_col_click = click_to_process[3] ? other_col -1 : (click_to_process[2] ? other_col + 1 : other_col);	
 
-	assign game_end = (star_counter == 0);
+	assign game_end = (star_counter == 0) & ~new_game_ready & ~game_begin & ~new_game_in_progress & ~resetting;
 
-	assign address_write_om = (process_move ? address_write_om_ent_mv : address_write_om_gl);
-	assign data_write_om = (process_move ? data_write_om_ent_mv : data_write_om_gl);
-	assign wren = (process_move ? wren_ent_mv : wren_gl);
+	assign address_write_om = resetting ? address_write_om_ngc : (process_move ? address_write_om_ent_mv : address_write_om_gl);
+	assign data_write_om = resetting ? data_write_om_ngc : (process_move ? data_write_om_ent_mv : data_write_om_gl);
+	assign wren = resetting ? wren_ngc : (process_move ? wren_ent_mv : wren_gl);
 
 	initial begin
 		game_begin <= 1'b1;
@@ -80,9 +91,10 @@ module game_logic(
 		game_begin_read_col <= 1'b1;
 		address_write_om_gl <= 120;
 		kd_mem <= 4'b0;
-		star_counter <= 6'b1;
+		star_counter <= 6'b0;
 		started_end <= 1'b0;
 		process_move <= 1'b0;
+		new_game_pending <= 1'b0;
 	end
 
 	hextoseg h0(hexa[6:0], star_counter[3:0]);
@@ -92,12 +104,23 @@ module game_logic(
 	hextoseg h4(hexa[34:28], pos_cowboy_for_calc[10:8]);
 	hextoseg h5(hexa[41:35], pos_other_for_calc[10:8]);
 
-	posedge_detector p0(clk, keys[0], kd[0]);
-	posedge_detector p1(clk, keys[1], kd[1]);
-	posedge_detector p2(clk, keys[2], kd[2]);
-	posedge_detector p3(clk, keys[3], kd[3]);
+	// posedge_detector p0(clk, keyboard_keys[0], kd[0]);
+	// posedge_detector p1(clk, keyboard_keys[1], kd[1]);
+	// posedge_detector p2(clk, keyboard_keys[2], kd[2]);
+	// posedge_detector p3(clk, keyboard_keys[3], kd[3]);
+
+	assign kd = keyboard_keys;
 
 	first_lit fl(kd, kd_one);
+
+	assign leds[0] = resetting;
+	assign leds[2] = new_game_in_progress;
+	// assign leds[9:3] = address_read_om;
+	assign leds[3] = new_game_ready;
+	assign leds[4] = game_begin;
+	assign leds[5] = game_end;
+	assign leds[6] = process_move;
+	assign leds[7] = moving_units;
 
 	entities_mover ent_mover(address_write_om_ent_mv,
 							data_write_om_ent_mv,
@@ -116,10 +139,42 @@ module game_logic(
 							process_move,
 							field_type_after,
 							clk,
-							leds);
+							);
+
+	new_game_coordinator ngc(address_write_om_ngc,
+							data_write_om_ngc,
+							wren_ngc,
+    						keys,
+    						switches,
+    						new_game_request,
+							new_game_in_progress,
+    						resetting,
+							new_game_ready,
+    						clk,
+							leds[1], ,);
 	
 	always @(posedge clk) begin
-		if (game_begin) begin
+		if (new_game_request) new_game_waiting <= 1'b1;
+		if (new_game_waiting & next_screen) begin
+			new_game_in_progress <= 1'b1;
+			new_game_waiting <= 1'b0;
+			started_end <= 1'b0;
+			wren_gl <= 1'b0;
+		end
+
+		if (new_game_ready) begin
+			game_begin <= 1'b1;
+			cooldown <= 6'b0;
+			wait_for_read <= 1'b1;
+			game_begin_read_row <= 1'b1;
+			game_begin_read_col <= 1'b1;
+			address_write_om_gl <= 7'd120;
+			kd_mem <= 4'b0;
+			star_counter <= 6'b0;
+			process_move <= 1'b0;
+			new_game_in_progress <= 1'b0;
+			new_state <= 1'b1;
+		end else if (game_begin) begin
 			if (next_screen) begin
 				cooldown <= {cooldown[4:0], 1'b1};
 				if (cooldown[5]) begin
@@ -133,11 +188,11 @@ module game_logic(
 					if (game_begin_read_row) begin
 						cowboy_row <= data_read_om;
 						game_begin_read_row <= 1'b0;
-						address_read_om <= address_read_om + 1;
+						address_read_om <= address_read_om + 7'd1;
 						wait_for_read <= 1'b1;
 					end else if (game_begin_read_col) begin 
 						cowboy_col <= data_read_om;
-						address_read_om <= address_read_om + 1;
+						address_read_om <= address_read_om + 7'd1;
 						wait_for_read <= 1'b1;
 						game_begin_read_col <= 1'b0;
 					end else begin
@@ -236,33 +291,35 @@ module game_logic(
 						wait_for_read <= 1'b1;
 					end else begin
 						processing_next_screen <= 1'b0;
-						new_state <= 1'b1;
+						new_state <= new_game_in_progress ? 1'b0 : 1'b1;
 						address_read_om <= cowboy_row * row + cowboy_col;
 					end
 				end
 			end
-		end else begin // game_end
-			started_end <= 1'b1;
-			address_write_om_gl <= 0;
-			data_write_om_gl <= 0;
-			wren_gl <= 1'b1;
-			if (started_end) begin
+		end else if (~new_game_in_progress) begin // game_end
+			if (~started_end) begin
+				started_end <= 1'b1;
+				address_write_om_gl <= 0;
+				data_write_om_gl <= {3'b000, 8'b0};
+				wren_gl <= 1'b1;
+			end else begin
 				if (address_write_om_gl < 99) begin
 					address_write_om_gl <= address_write_om_gl + 7'b1;
 				end else begin
 					wren_gl <= 1'b0;
 					new_state <= 1'b1;
+					address_write_om_gl <= 123;
 				end
 
 				if (address_write_om_gl == 43) begin
 					data_write_om_gl <= {3'b011, 8'b0};
 				end else begin
-					data_write_om_gl <= 0;
+					data_write_om_gl <= {3'b000, 8'b0};
 				end
 			end
 		end
 		
-		if (started_end & (address_write_om_gl == 99) & next_screen) new_state <= 1'b1;
+		if (started_end & (address_write_om_gl == 123) & next_screen & ~new_game_waiting) new_state <= 1'b1;
 
 		if (new_state) new_state <= 1'b0;
 		if (wait_for_read) wait_for_read <= 1'b0;

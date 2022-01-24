@@ -53,9 +53,9 @@ module entities_mover(
         waiting_for_new_move <= 1'b1;
     end
 
-    assign leds[0] = processing;
-    assign leds[4:1] = box_row_new[3:0];
-    assign leds[8:5] = box_row[3:0];
+    // assign leds[0] = processing;
+    // assign leds[4:1] = box_row_new[3:0];
+    // assign leds[8:5] = box_row[3:0];
     // assign leds[9:7] = pos_cowboy_calc[10:8];
     // assign leds[7] = process_move;
     

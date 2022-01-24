@@ -26,16 +26,26 @@ module synchronizer_slow_to_fast(
 
 endmodule
 
-module posedge_detector(input clk, input data_in, output reg data_out);
-	initial begin
-		data_out <= 1'b0;
-	end
+module synchronize_and_detect(input clk, input data_in, output data_out);
+	wire synced;
+
+	synchronizer s(synced, clk, data_in);
+	posedge_detector p(clk, synced, data_out);
 	
-	always @(posedge clk) begin
-		if (data_in & ~data_out) data_out <= 1'b1;
-		else data_out <= 1'b0;
+endmodule
+
+module posedge_detector(input clk, input data_in, output data_out);
+    reg q;
+    initial begin
+        q <= 1'b0;
+    end
+
+    always @(posedge clk) begin
+        q <= data_in;
 	end
-	
+
+    assign data_out = !q && data_in;
+
 endmodule
 
 module first_lit(input [3:0] data_in, output reg [3:0] data_out);
@@ -48,4 +58,14 @@ module first_lit(input [3:0] data_in, output reg [3:0] data_out);
 			default: data_out = 4'b0000;
 		endcase
 	end
+endmodule
+
+module synchronizer(input clk, input sig, output synsig);
+    parameter N=2;
+
+    reg [N-1:0] buffer;
+    assign synsig = buffer[N-1];
+    always @(posedge clk) begin
+        buffer <= {buffer[N-2:0], sig};
+    end
 endmodule

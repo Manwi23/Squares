@@ -1,6 +1,7 @@
 
 module squares (
 	clk_clk,
+	hex_new_signal,
 	ledr_new_signal,
 	ps2_conduit_end_clk,
 	ps2_conduit_end_data,
@@ -13,9 +14,11 @@ module squares (
 	vga_R,
 	vga_G,
 	vga_B,
-	hex_new_signal);	
+	keys_new_signal,
+	switches_new_signal);	
 
 	input		clk_clk;
+	output	[41:0]	hex_new_signal;
 	output	[9:0]	ledr_new_signal;
 	input		ps2_conduit_end_clk;
 	input		ps2_conduit_end_data;
@@ -28,5 +31,6 @@ module squares (
 	output	[7:0]	vga_R;
 	output	[7:0]	vga_G;
 	output	[7:0]	vga_B;
-	output	[41:0]	hex_new_signal;
+	input	[3:0]	keys_new_signal;
+	input	[9:0]	switches_new_signal;
 endmodule

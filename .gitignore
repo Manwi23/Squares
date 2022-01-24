@@ -25,7 +25,7 @@ squares/simulation
 *.html
 *.jdi
 *.jpg
-*.mif
+# *.mif
 *.pin
 *.pof
 *.ptf.*

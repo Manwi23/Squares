@@ -12,7 +12,9 @@ module game (
 		input  wire        clock,                                 //                clock_50.clk
 		input  wire        clock_ps                               //                clock_ps.clk
 		,output wire [9:0] conduit_end_1_new_signal
-		,output wire [41:0] conduit_end_2_new_signal
+		,output wire [41:0] conduit_end_2_new_signal,
+		input  wire [3:0]  keys,                                  //                    keys
+        input  wire [9:0]  switches                               //                    switches
 	);
 
 	wire next_row, next_screen;
@@ -31,7 +33,7 @@ module game (
 	wire [6:0] address_write_om;
 	wire [10:0] data_write_om;
 	wire [6:0] address_read_gl;
-	wire [3:0] keys;
+	wire [3:0] keys_keyboard;
 	wire swap_row;
 	wire swap_screen;
 	wire next_row_detected;
@@ -117,15 +119,17 @@ module game (
 					  data_read_gl,
 					  next_screen_detected,
 					  new_state,
-					  keys,
+					  keys_keyboard,
 					  clock,
+					  keys,
+                      switches,
 					  conduit_end_1_new_signal,
 					  conduit_end_2_new_signal);
 					  
-	keyboard_controller kc(keys,
-								  clock,
-								  clock_ps,
-								  conduit_end_data,
-								  conduit_end_clk);
+	keyboard_controller kc(keys_keyboard,
+							clock,
+							clock_ps,
+							conduit_end_data,
+							conduit_end_clk);
 	
 endmodule

@@ -145,6 +145,14 @@
          type = "String";
       }
    }
+   element squares
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element video_pll_0
    {
       datum _sortIndex
@@ -184,11 +192,13 @@
  <instanceScript></instanceScript>
  <interface name="clk" internal="clk_0.clk_in" type="clock" dir="end" />
  <interface name="hex" internal="game_0.conduit_end_2" type="conduit" dir="end" />
+ <interface name="keys" internal="game_0.keys" type="conduit" dir="end" />
  <interface name="ledr" internal="game_0.conduit_end_1" type="conduit" dir="end" />
  <interface name="leds" internal="game_0.conduit_test_leds" />
  <interface name="pll_0_locked" internal="pll_0.locked" />
  <interface name="ps2" internal="game_0.conduit_end" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
+ <interface name="switches" internal="game_0.switches" type="conduit" dir="end" />
  <interface
    name="vga"
    internal="video_vga_controller_0.external_interface"
