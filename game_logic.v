@@ -155,7 +155,7 @@ module game_logic(
 	
 	always @(posedge clk) begin
 		if (new_game_request) new_game_waiting <= 1'b1;
-		if (new_game_waiting & next_screen) begin
+		if (new_game_waiting & next_screen & ~moving_units) begin
 			new_game_in_progress <= 1'b1;
 			new_game_waiting <= 1'b0;
 			started_end <= 1'b0;

@@ -30,8 +30,11 @@ with open('boards.txt', 'r') as f:
             l = f.readline()[:-1]
             n = list(map(lambda x: int(x), l))
             board += [n]
-            if 4 in n:
-                cowboys += [(i, n.index(4))]
+            if 4 in n or 7 in n:
+                if 4 in n:
+                    cowboys += [(i, n.index(4))]
+                else:
+                    cowboys += [(i, n.index(7))]
         boards += [board]
         l = f.readline()
 
@@ -60,7 +63,7 @@ with open('op_memory.mif', 'w') as f:
                 f2.write(a + " : " + s + ";\n")       
                 cnt += 1
 
-            stars = sum([sum(map(lambda x: x == 1, i)) for i in board])
+            stars = sum([sum(map(lambda x: x == 1 or x == 7, i)) for i in board])
             a = str(hex(cnt))[2:].upper()
             s = str(bin(stars))[2:].upper()
             s = '0' * (16 - len(s)) + s
