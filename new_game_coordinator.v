@@ -11,7 +11,7 @@ module new_game_coordinator (
     input clk,
     output wire one_led,
     output wire another_led,
-    output reg [2:0] leeds
+    output wire [1:0] leds
 );
 
     wire reset;
@@ -25,41 +25,63 @@ module new_game_coordinator (
 
     boards_memory bm(address_read_bm, data_read_bm, clk);
 
+    reg [1:0] state;
+    parameter WAITING_FOR_REQUEST_APPROVAL = 0;
+    parameter PERFORMING_RESET = 1;
+    parameter DOING_NOTHING = 2;
+
+    reg been_there;
+
     initial begin
         new_game_request <= 1'b1;
         resetting <= 1'b0;
+        state <= WAITING_FOR_REQUEST_APPROVAL;
+        been_there <= 1'b0;
     end
 
-    assign one_led = reset;
-    assign another_led = keys[0];
 
+    assign leds = state;
+    assign one_led = been_there;
+    
     always @(posedge clk) begin
-        if (reset & ~new_game_request & ~resetting) begin
-            new_game_request <= 1'b1;
-        end
-
-        if (resetting) begin
-            if (~wait_for_read) begin
-                data_write_om <= data_read_bm;
-                wren <= 1'b1;
-                address_read_bm <= address_read_bm + 10'b1;
-                address_write_om <= address_write_om + 7'b1;
-                if (address_write_om == 7'd104) begin
-                    resetting <= 1'b0;
-                    new_game_ready <= 1'b1;
+        case (state)
+            WAITING_FOR_REQUEST_APPROVAL:
+                begin
+                    if (new_game_in_progress) begin
+                        resetting <= 1'b1;
+                        address_read_bm <= (10'd128 * switches[2:0]);
+                        address_write_om <= -1;
+                        wait_for_read <= 1'b1;
+                        state <= PERFORMING_RESET;
+                    end
                 end
-            end else begin
-                address_read_bm <= address_read_bm + 10'b1;
-            end
-        end else if (new_game_in_progress & ~new_game_ready) begin
-            resetting <= 1'b1;
-            address_read_bm <= (10'd128 * switches[2:0]);
-            leeds <= switches[2:0];
-            address_write_om <= -1;
-            wait_for_read <= 1'b1;
-        end else begin
-            wren <= 1'b0;
-        end
+            PERFORMING_RESET:
+                begin
+                    if (~wait_for_read) begin
+                        data_write_om <= data_read_bm;
+                        wren <= 1'b1;
+                        address_read_bm <= address_read_bm + 10'b1;
+                        address_write_om <= address_write_om + 7'b1;
+                        if (address_write_om == 7'd104) begin
+                            resetting <= 1'b0;
+                            new_game_ready <= 1'b1;
+                            state <= DOING_NOTHING;
+                            been_there <= 1'b1;
+                        end
+                    end else begin
+                        address_read_bm <= address_read_bm + 10'b1;
+                    end
+                end
+            DOING_NOTHING:
+                begin
+                    wren <= 1'b0;
+                    if (reset) begin
+                        new_game_request <= 1'b1;
+                        state <= WAITING_FOR_REQUEST_APPROVAL;
+                    end
+                end
+            default: state <= WAITING_FOR_REQUEST_APPROVAL;
+        endcase
 
         if (wait_for_read) wait_for_read <= 1'b0;
         if (new_game_ready) new_game_ready <= 1'b0;
@@ -76,10 +98,14 @@ module boards_memory(
 	input clk
 );
 
-	reg [15:0] boards_memory [1024] /* synthesis ram_init_file = "boards_memory.mif" */;
+    wire [10:0] longer_stuff; 
+
+	reg [7:0] boards_mem [1024] /* synthesis ram_init_file = "boards_memory.mif" */;
 	
+    assign longer_stuff = boards_mem[address_read];
+
 	always @(posedge clk) begin
-        data_read <= boards_memory[address_read][10:0];
-	end
+        data_read <= longer_stuff[7:7] ? (longer_stuff[6:0]) : (longer_stuff[2:0] << 8); 
+    end
 
 endmodule
