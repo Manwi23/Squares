@@ -8,10 +8,8 @@ module new_game_coordinator (
     input new_game_in_progress,
     output reg resetting,
     output reg new_game_ready,
-    input clk,
-    output wire one_led,
-    output wire another_led,
-    output wire [1:0] leds
+    input clk, 
+    output [1:0] leds
 );
 
     wire reset;
@@ -21,35 +19,30 @@ module new_game_coordinator (
     reg [9:0] address_read_bm;
 	wire [10:0] data_read_bm;
 
-    posedge_detector pd(clk, ~keys[0], reset);
-
-    boards_memory bm(address_read_bm, data_read_bm, clk);
-
     reg [1:0] state;
     parameter WAITING_FOR_REQUEST_APPROVAL = 0;
     parameter PERFORMING_RESET = 1;
     parameter DOING_NOTHING = 2;
 
-    reg been_there;
-
     initial begin
         new_game_request <= 1'b1;
         resetting <= 1'b0;
         state <= WAITING_FOR_REQUEST_APPROVAL;
-        been_there <= 1'b0;
     end
 
+    posedge_detector pd(clk, ~keys[0], reset);
+
+    boards_memory bm(address_read_bm, data_read_bm, clk);
 
     assign leds = state;
-    assign one_led = been_there;
     
     always @(posedge clk) begin
         case (state)
             WAITING_FOR_REQUEST_APPROVAL:
                 begin
                     if (new_game_in_progress) begin
-                        resetting <= 1'b1;
                         address_read_bm <= (10'd128 * switches[2:0]);
+                        resetting <= 1'b1;
                         address_write_om <= -1;
                         wait_for_read <= 1'b1;
                         state <= PERFORMING_RESET;
@@ -62,11 +55,10 @@ module new_game_coordinator (
                         wren <= 1'b1;
                         address_read_bm <= address_read_bm + 10'b1;
                         address_write_om <= address_write_om + 7'b1;
-                        if (address_write_om == 7'd104) begin
+                        if (address_write_om == 7'd103) begin
                             resetting <= 1'b0;
                             new_game_ready <= 1'b1;
                             state <= DOING_NOTHING;
-                            been_there <= 1'b1;
                         end
                     end else begin
                         address_read_bm <= address_read_bm + 10'b1;

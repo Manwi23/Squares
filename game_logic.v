@@ -98,8 +98,7 @@ module game_logic(
 							process_move,
 							field_type_after,
 							clk,
-							new_game_ready,
-							);
+							new_game_ready);
 
 	new_game_coordinator ngc(address_write_om_ngc,
 							data_write_om_ngc,
@@ -110,8 +109,7 @@ module game_logic(
 							new_game_in_progress,
     						resetting,
 							new_game_ready,
-    						clk,
-							leds[7], , leds[6:5]);
+    						clk, leds[6:5]);
 
 	assign address_write_om = resetting ? address_write_om_ngc : (process_move ? address_write_om_ent_mv : address_write_om_gl);
 	assign data_write_om = resetting ? data_write_om_ngc : (process_move ? data_write_om_ent_mv : data_write_om_gl);
@@ -143,17 +141,14 @@ module game_logic(
 	
 	assign leds[9] = new_game_waiting;
 	assign leds[8] = new_game_in_progress;
+	assign leds[7] = resetting;
 	// assign leds[7] = new_game_ready;
 	// assign leds[6:0] = address_read_om;
 	
-	// reg [5:0] cnt_news;
 	assign leds[4:0] = state;
 
 	always @(posedge clk) begin
 		if (new_game_request) new_game_waiting <= 1'b1;
-
-		// if (next_screen) cnt_news <= cnt_news + 1;
-		// if (new_state) cnt_news <= cnt_news - 1;
 
 		case (state)
 			WAITING_FOR_NEW_GAME:
@@ -200,7 +195,7 @@ module game_logic(
 					if (next_screen) begin
 						if (new_game_waiting) begin
 							state <= WAITING_FOR_NEW_GAME;
-							new_state <= 1;
+							new_state <= 1'b1;
 						end else begin
 							if (star_counter == 0) begin
 								state <= ENDING_GAME;

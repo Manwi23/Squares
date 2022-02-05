@@ -5,9 +5,9 @@ module vga_streamer(
 		output reg         avalon_streaming_source_valid,         //                        .valid
 		input  wire        avalon_streaming_source_ready,         //                        .ready
 		input  wire        clock_vga,                             //               clock_vga.clk
-		output wire			 next_row,
+		output wire		   next_row,
 		output wire        next_screen,
-		input       [23:0] data,
+		input  wire [23:0] data,
 		output reg  [8:0]  address
 );
 

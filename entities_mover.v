@@ -16,8 +16,7 @@ module entities_mover(
     input process_move,
     input [2:0] field_type_after,
     input clk,
-    input new_game_ready,
-    output wire [9:0] leds
+    input new_game_ready
 );
 
     localparam [6:0] row = 10;

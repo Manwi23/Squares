@@ -51,11 +51,16 @@ with open('op_memory.mif', 'w') as f:
             for i in range(10):
                 for j in range(10):
                     a = str(hex(cnt))[2:].upper()
-                    # s = str(bin(board[i][j] * 2**8))[2:].upper()
+
+                    s_op = str(bin(board[i][j] * 2**8))[2:].upper()
+                    s_op = '0' * (16 - len(s_op)) + s_op
+
                     s = str(bin(board[i][j]))[2:].upper()
                     s = '0' * (size - len(s)) + s
-                    if not b: f.write(a + " : " + s + ";\n")       
-                    f2.write(a + " : " + s + ";\n")   
+
+                    if not b: f.write(a + " : " + s_op + ";\n")       
+                    f2.write(a + " : " + s + ";\n")  
+
                     cnt += 1
 
             for i in cowboys[b]:
