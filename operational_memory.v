@@ -11,7 +11,7 @@ module operational_memory(
 	input clk
 );
 
-	reg [15:0] operational_memory [128] /* synthesis ram_init_file = "op_memory.mif" */;
+	reg [15:0] operational_memory [128];
 
 	reg gl_reading;
 	

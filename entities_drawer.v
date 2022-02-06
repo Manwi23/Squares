@@ -29,11 +29,12 @@ module entities_drawer(
 	reg first_pass;
 	reg wait_for_read;
 	reg next_end;
+
 	reg [8:0] row_address;
 	reg [8:0] col_address;
 	reg [7:0] entities_number_local;
-
 	reg [2:0] state;
+	
 	parameter WAITING_FOR_NEXT_SCREEN= 0;
 	parameter WAITING_FOR_NEW_STATE = 1;
 	parameter DRAWING_FIRST_PASS = 2;
