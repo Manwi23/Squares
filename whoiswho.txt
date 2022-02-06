@@ -1,3 +1,4 @@
+field codes:
 0 - empty field
 1 - box target
 2 - wall
@@ -7,7 +8,7 @@
 6 - box on box target
 7 - cowboy on box target
 
-obrazki:
+pictures codes in mem:
 0 empty field (dirt)
 1 box
 2 cowboy
