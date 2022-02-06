@@ -4,22 +4,20 @@
 
 `timescale 1 ps / 1 ps
 module squares (
-		input  wire        clk_clk,              //      clk.clk
-		output wire [41:0] hex_new_signal,       //      hex.new_signal
-		input  wire [3:0]  keys_new_signal,      //     keys.new_signal
-		output wire [9:0]  ledr_new_signal,      //     ledr.new_signal
-		input  wire        ps2_conduit_end_clk,  //      ps2.conduit_end_clk
-		input  wire        ps2_conduit_end_data, //         .conduit_end_data
-		input  wire        reset_reset_n,        //    reset.reset_n
-		input  wire [9:0]  switches_new_signal,  // switches.new_signal
-		output wire        vga_CLK,              //      vga.CLK
-		output wire        vga_HS,               //         .HS
-		output wire        vga_VS,               //         .VS
-		output wire        vga_BLANK,            //         .BLANK
-		output wire        vga_SYNC,             //         .SYNC
-		output wire [7:0]  vga_R,                //         .R
-		output wire [7:0]  vga_G,                //         .G
-		output wire [7:0]  vga_B                 //         .B
+		input  wire       clk_clk,              //      clk.clk
+		input  wire [3:0] keys_new_signal,      //     keys.new_signal
+		input  wire       ps2_conduit_end_clk,  //      ps2.conduit_end_clk
+		input  wire       ps2_conduit_end_data, //         .conduit_end_data
+		input  wire       reset_reset_n,        //    reset.reset_n
+		input  wire [9:0] switches_new_signal,  // switches.new_signal
+		output wire       vga_CLK,              //      vga.CLK
+		output wire       vga_HS,               //         .HS
+		output wire       vga_VS,               //         .VS
+		output wire       vga_BLANK,            //         .BLANK
+		output wire       vga_SYNC,             //         .SYNC
+		output wire [7:0] vga_R,                //         .R
+		output wire [7:0] vga_G,                //         .G
+		output wire [7:0] vga_B                 //         .B
 	);
 
 	wire         game_0_avalon_streaming_source_valid;         // game_0:avalon_streaming_source_valid -> video_vga_controller_0:valid
@@ -43,8 +41,6 @@ module squares (
 		.clock_vga                             (video_pll_0_vga_clk_clk),                      //               clock_vga.clk
 		.clock                                 (clk_clk),                                      //                clock_50.clk
 		.clock_ps                              (pll_0_outclk0_clk),                            //                clock_ps.clk
-		.conduit_end_1_new_signal              (ledr_new_signal),                              //           conduit_end_1.new_signal
-		.conduit_end_2_new_signal              (hex_new_signal),                               //           conduit_end_2.new_signal
 		.keys                                  (keys_new_signal),                              //                    keys.new_signal
 		.switches                              (switches_new_signal)                           //                switches.new_signal
 	);

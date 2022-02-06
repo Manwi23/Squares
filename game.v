@@ -10,14 +10,11 @@ module game (
 		input  wire        avalon_streaming_source_ready,         //                        .ready
 		input  wire        clock_vga,                             //               clock_vga.clk
 		input  wire        clock,                                 //                clock_50.clk
-		input  wire        clock_ps                               //                clock_ps.clk
-		,output wire [9:0] conduit_end_1_new_signal
-		,output wire [41:0] conduit_end_2_new_signal,
+		input  wire        clock_ps,                              //                clock_ps.clk
 		input  wire [3:0]  keys,                                  //                    keys
         input  wire [9:0]  switches                               //                    switches
 	);
 
-	wire next_row, next_screen;
 	wire [23:0] data_read_vga;
 	wire [8:0] address_read_vga;
 	wire [23:0] data_write_row;
@@ -34,6 +31,9 @@ module game (
 	wire [10:0] data_write_om;
 	wire [6:0] address_read_gl;
 	wire [3:0] keys_keyboard;
+
+	wire next_row;
+	wire next_screen;
 	wire swap_row;
 	wire swap_screen;
 	wire next_row_detected;
@@ -47,7 +47,7 @@ module game (
 	posedge_detector pd_row(clock, swap_row, next_row_detected);
 	posedge_detector pd_screen(clock, swap_screen, next_screen_detected);
 	
-	synchronizer_slow_to_fast #(1) s1(clock, next_row, swap_row); // input output
+	synchronizer_slow_to_fast #(1) s1(clock, next_row, swap_row);
 	synchronizer_slow_to_fast #(1) s2(clock, next_screen, swap_screen);
 	
 	posedge_detector pd_row_vga(clock_vga, next_row, next_row_detected_vga);
@@ -79,6 +79,7 @@ module game (
 					  data_write_row,
 					  wren,
 					  next_row_detected,
+					  next_screen_detected,
 					  clock);
 					  
 							
@@ -122,9 +123,7 @@ module game (
 					  keys_keyboard,
 					  clock,
 					  keys,
-                      switches,
-					  conduit_end_1_new_signal,
-					  conduit_end_2_new_signal);
+                      switches);
 					  
 	keyboard_controller kc(keys_keyboard,
 							clock,

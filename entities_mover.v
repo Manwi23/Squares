@@ -33,6 +33,7 @@ module entities_mover(
 
     reg [10:0] pos_cowboy_calc;
     reg [10:0] pos_box_calc;
+    reg [2:0] state;
 
     assign next_cowboy_pos = {pos_cowboy_calc[10:8], 
                                 pos_cowboy_calc[7:2] + 6'b1,
@@ -46,7 +47,6 @@ module entities_mover(
 	assign box_row_new = pos_box_calc[1] ? (pos_box_calc[0] ? (box_row + 1) : (box_row - 1)) : box_row;
 	assign box_col_new = ~(pos_box_calc[1]) ? (pos_box_calc[0] ? (box_col + 1) : (box_col - 1)) : box_col;
 
-    reg [2:0] state;
     parameter WAITING_FOR_NEW_MOVE = 0;
     parameter WAITING_FOR_OLD_MOVE = 1;
     parameter PROCESSING_MOVE_COWBOY = 2;

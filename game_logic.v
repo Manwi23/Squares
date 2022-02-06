@@ -9,9 +9,7 @@ module game_logic(
 	input [3:0] keyboard_keys,
 	input clk,
 	input  wire [3:0] keys,
-    input  wire [9:0] switches,
-	output wire [9:0] leds,
-	output wire [41:0] hexa
+    input  wire [9:0] switches
 );
 	
 	localparam [6:0] row = 10;
@@ -32,7 +30,7 @@ module game_logic(
 	reg [10:0] pos_cowboy_for_calc;
 	reg [2:0] field_type_after;
 	reg [3:0] click_to_process;
-	reg [6:0] star_counter;
+	reg [10:0] star_counter;
 	reg [3:0] kd_mem;
 	reg [6:0] address_write_om_gl;
 	reg [10:0] data_write_om_gl;
@@ -63,13 +61,6 @@ module game_logic(
 	assign cowboy_col_click = click_to_process[3] ? cowboy_col -1 : (click_to_process[2] ? cowboy_col + 1 : cowboy_col);
 	assign other_row_click = click_to_process[0] ? other_row -1 : (click_to_process[1] ? other_row + 1 : other_row);
 	assign other_col_click = click_to_process[3] ? other_col -1 : (click_to_process[2] ? other_col + 1 : other_col);	
-
-	hextoseg h0(hexa[6:0], star_counter[3:0]);
-	hextoseg h1(hexa[13:7], star_counter[6:4]);
-	hextoseg h2(hexa[20:14], cowboy_col[3:0]);
-	hextoseg h3(hexa[27:21], cowboy_row[3:0]);
-	hextoseg h4(hexa[34:28], pos_cowboy_for_calc[10:8]);
-	hextoseg h5(hexa[41:35], pos_other_for_calc[10:8]);
 
 	// if you wanted to go exactly one step per click
 	// posedge_detector p0(clk, keyboard_keys[0], kd[0]);
@@ -109,7 +100,7 @@ module game_logic(
 							new_game_in_progress,
     						resetting,
 							new_game_ready,
-    						clk, leds[6:5]);
+    						clk);
 
 	assign address_write_om = resetting ? address_write_om_ngc : (process_move ? address_write_om_ent_mv : address_write_om_gl);
 	assign data_write_om = resetting ? data_write_om_ngc : (process_move ? data_write_om_ent_mv : data_write_om_gl);
@@ -132,20 +123,12 @@ module game_logic(
 		wait_for_read <= 1'b1;
 		address_write_om_gl <= 120;
 		kd_mem <= 4'b0;
-		star_counter <= 6'b0;
+		star_counter <= 11'b0;
 		started_end <= 1'b0;
 		process_move <= 1'b0;
 		state <= GAME_ENDED_LOOP;
 		new_game_in_progress <= 1'b0;
 	end
-	
-	assign leds[9] = new_game_waiting;
-	assign leds[8] = new_game_in_progress;
-	assign leds[7] = resetting;
-	// assign leds[7] = new_game_ready;
-	// assign leds[6:0] = address_read_om;
-	
-	assign leds[4:0] = state;
 
 	always @(posedge clk) begin
 		if (new_game_request) new_game_waiting <= 1'b1;
@@ -153,11 +136,11 @@ module game_logic(
 		case (state)
 			WAITING_FOR_NEW_GAME:
 				begin
-					new_game_waiting <= 1'b0;
 					if (next_screen) begin
 						state <= STARTING_NEW_GAME;
 						wren_gl <= 1'b0;
 						new_game_in_progress <= 1'b1;
+						new_game_waiting <= 1'b0;
 					end
 				end
 			STARTING_NEW_GAME:

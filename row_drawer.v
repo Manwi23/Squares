@@ -6,6 +6,7 @@ module row_drawer(
 	output reg [23:0] data_write_row,
 	output reg wren,
 	input swap,
+	input next_screen,
 	input clk
 );
 	
@@ -21,6 +22,7 @@ module row_drawer(
 	reg [14:0] address_read_rom;
 	reg [8:0] entity_pixel_counter;
 	reg [8:0] row_number;
+	reg [7:0] entities_number_local;
 	
 	reg ready;
 	reg wait_for_read;
@@ -42,6 +44,8 @@ module row_drawer(
 	assign ent_type = data_read_ent[20:18];
 	
 	always @(posedge clk) begin
+		if (next_screen) entities_number_local <= entities_number;
+
 		if (swap) begin
 			address_read_ent <= 0;
 			ready <= 1'b0;
@@ -51,7 +55,7 @@ module row_drawer(
 			wait_for_rom <= 1'b0;
 			if (row_number < max_row - 1) row_number <= row_number + 9'b1;
 			else row_number <= 0;
-		end else if (address_read_ent < entities_number) begin
+		end else if (address_read_ent < entities_number_local) begin
 			if (ready & ~wait_for_rom) begin
 				data_write_row <= data_read_rom;
 				address_read_rom <= address_read_rom + 15'b1;
@@ -65,7 +69,7 @@ module row_drawer(
 					wren <= (data_read_rom == 0) ? 1'b0 : 1'b1;
 				end
 			end else if (~wait_for_rom) begin
-				if ( (row_number >= start_row) & (row_number < (start_row + one_entity_dir)) & ~wait_for_read ) begin
+				if ((row_number >= start_row) & (row_number < (start_row + one_entity_dir)) & ~wait_for_read) begin
 					address_read_rom <= (ent_type * one_entity_size) + (row_number - start_row) * one_entity_dir;
 					ready <= 1'b1;
 					wren <= 1'b0;
@@ -77,6 +81,7 @@ module row_drawer(
 				end
 			end else address_read_rom <= address_read_rom + 15'b1;
 		end
+
 		if (wait_for_read) wait_for_read <= 1'b0;
 		if (wait_for_rom) wait_for_rom <= 1'b0;
 	end

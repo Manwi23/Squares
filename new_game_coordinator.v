@@ -8,8 +8,7 @@ module new_game_coordinator (
     input new_game_in_progress,
     output reg resetting,
     output reg new_game_ready,
-    input clk, 
-    output [1:0] leds
+    input clk
 );
 
     wire reset;
@@ -33,8 +32,6 @@ module new_game_coordinator (
     posedge_detector pd(clk, ~keys[0], reset);
 
     boards_memory bm(address_read_bm, data_read_bm, clk);
-
-    assign leds = state;
     
     always @(posedge clk) begin
         case (state)
@@ -72,7 +69,11 @@ module new_game_coordinator (
                         state <= WAITING_FOR_REQUEST_APPROVAL;
                     end
                 end
-            default: state <= WAITING_FOR_REQUEST_APPROVAL;
+            default: 
+                begin
+                    state <= WAITING_FOR_REQUEST_APPROVAL;
+                    new_game_request <= 1'b1;
+                end
         endcase
 
         if (wait_for_read) wait_for_read <= 1'b0;

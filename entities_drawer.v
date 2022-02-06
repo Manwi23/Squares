@@ -12,7 +12,7 @@ module entities_drawer(
 
 	localparam [6:0] board_size = 100;
 	localparam [8:0] one_entity_dir = 48;
-	localparam [5:0] row_dir = 10;
+	localparam [6:0] row_dir = 10;
 	
 	wire [8:0] shift_up;
 	wire [8:0] shift_down;
@@ -31,13 +31,22 @@ module entities_drawer(
 	reg next_end;
 	reg [8:0] row_address;
 	reg [8:0] col_address;
+	reg [7:0] entities_number_local;
+
+	reg [2:0] state;
+	parameter WAITING_FOR_NEXT_SCREEN= 0;
+	parameter WAITING_FOR_NEW_STATE = 1;
+	parameter DRAWING_FIRST_PASS = 2;
+	parameter DRAWING_SECOND_PASS = 3;
+	parameter ENDING = 4;
 	
 	initial begin
-		entities_number <= 8'b0;
+		entities_number_local <= 8'b0;
 		wren <= 1'b0;
 		waiting <= 1'b0;
 		drawing <= 1'b0;
 		wait_for_read <= 1'b0;
+		state <= WAITING_FOR_NEXT_SCREEN;
 	end
 	
 	assign ent_type = data_read_om[10:8];
@@ -50,72 +59,88 @@ module entities_drawer(
 	assign place_in_col = col_address * one_entity_dir;
 	assign new_pos_updown = place_in_row - shift_up + shift_down;
 	assign new_pos_rightleft = place_in_col - shift_left + shift_right;
-	
-	
+
 	always @(posedge clk) begin
-		if (next_screen) waiting <= 1'b1;
-		else if (waiting & new_state) begin
-			drawing <= 1'b1;
-			waiting <= 1'b0;
-			entities_number <= 8'd100;
-			first_pass <= 1'b1;
-			wait_for_read <= 1'b1;
-			next_end <= 1'b0;
-		end else if (drawing & ~next_end) begin
-			if (~wait_for_read) begin
-				wren <= 1'b1;
-				if ((ent_type > 3) & first_pass) begin // background
-					if (ent_type > 5) begin 
-						data_write_ent <= {3'b100, place_in_row, place_in_col};
-					end else begin
-						data_write_ent <= {3'b000, place_in_row, place_in_col};
+		case (state)
+			WAITING_FOR_NEXT_SCREEN:
+				begin
+					if (next_screen) state <= WAITING_FOR_NEW_STATE;
+				end
+			WAITING_FOR_NEW_STATE:
+				begin
+					if (new_state) begin
+						entities_number_local <= 8'd100;
+						wait_for_read <= 1'b1;
+						state <= DRAWING_FIRST_PASS;
 					end
-					address_write_ent <= address_read_om;
-				end else if ((ent_type > 3) & ~first_pass) begin
+				end
+			DRAWING_FIRST_PASS:
+				begin
+					wren <= 1'b1;
+					if (~wait_for_read) begin
+						if (ent_type > 3) begin
+							if (ent_type > 5) begin 
+								data_write_ent <= {3'b100, place_in_row, place_in_col};
+							end else begin
+								data_write_ent <= {3'b000, place_in_row, place_in_col};
+							end
+							address_write_ent <= address_read_om;
+							state <= DRAWING_SECOND_PASS;
+						end else begin
+							case (ent_type) 
+								3'b000: data_write_ent <= {3'b000, new_pos_updown, new_pos_rightleft};
+								3'b001: data_write_ent <= {3'b100, new_pos_updown, new_pos_rightleft};
+								3'b010: data_write_ent <= {3'b011, new_pos_updown, new_pos_rightleft};
+								default: data_write_ent <= {3'b101, new_pos_updown, new_pos_rightleft}; // game end
+							endcase
+							address_write_ent <= address_read_om;
+							
+							if (col_address < 9) begin
+								col_address <= col_address + 9'b1;
+							end else begin
+								col_address <= 9'b0;
+								row_address <= row_address + 9'b1;
+							end
+							wait_for_read <= 1'b1;
+
+							if (address_read_om == board_size - 1) state <= ENDING;
+						end
+					end
+				end
+			DRAWING_SECOND_PASS:
+				begin
 					if ((ent_type == 4) | (ent_type == 7)) begin
 						data_write_ent <= {3'b010, new_pos_updown, new_pos_rightleft};
 					end else begin
 						data_write_ent <= {3'b001, new_pos_updown, new_pos_rightleft};
 					end
-					address_write_ent <= entities_number;
-					entities_number <= entities_number + 8'd1;
-				end else begin
-					case (ent_type) 
-						3'b000: data_write_ent <= {3'b000, new_pos_updown, new_pos_rightleft};
-						3'b001: data_write_ent <= {3'b100, new_pos_updown, new_pos_rightleft};
-						3'b010: data_write_ent <= {3'b011, new_pos_updown, new_pos_rightleft};
-						default: data_write_ent <= {3'b101, new_pos_updown, new_pos_rightleft}; // game end
-					endcase
-					address_write_ent <= address_read_om;
-				end
-				
-				if ((address_read_om == board_size - 1) & (((ent_type > 3) & ~first_pass) | (ent_type < 4))) begin
-					next_end <= 1'b1;
-				end else begin
-					if ((ent_type < 4) | ((ent_type > 3) & ~first_pass)) begin
-						if (col_address < 9) begin
-							col_address <= col_address + 9'b1;
-						end else begin
-							col_address <= 9'b0;
-							row_address <= row_address + 9'b1;
-						end
-						wait_for_read <= 1'b1;
-						first_pass <= 1'b1;
+					address_write_ent <= entities_number_local;
+					entities_number_local <= entities_number_local + 8'd1;
+
+					if (col_address < 9) begin
+						col_address <= col_address + 9'b1;
+					end else begin
+						col_address <= 9'b0;
+						row_address <= row_address + 9'b1;
 					end
+					wait_for_read <= 1'b1;
+					
+					if (address_read_om == board_size - 1) state <= ENDING;
+					else state <= DRAWING_FIRST_PASS;
+
 				end
-				
-				if (first_pass & (ent_type > 3)) first_pass <= 1'b0;
-				
-			end else begin
-				wait_for_read <= 1'b0;
-				wren <= 1'b0;
-			end
-		end else if (next_end) begin
-			drawing <= 1'b0;
-			wren <= 1'b0;
-			col_address <= 9'b0;
-			row_address <= 9'b0;
-		end
+			ENDING:
+				begin
+					wren <= 1'b0;
+					col_address <= 9'b0;
+					row_address <= 9'b0;
+					entities_number <= entities_number_local;
+					state <= WAITING_FOR_NEXT_SCREEN;
+				end
+			default: state <= WAITING_FOR_NEXT_SCREEN;
+		endcase
+
+		if (wait_for_read) wait_for_read <= 1'b0;
 		
 	end
 
