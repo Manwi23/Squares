@@ -10,6 +10,8 @@ It's a Verilog implementation of the game of [Sokoban](https://en.wikipedia.org/
 ### What it looks like
 ![board](docs/board.jpg)
 
+https://user-images.githubusercontent.com/19879064/153722117-eba82b52-fe75-4dc9-8457-c541888b6fb8.mp4
+
 
 ### About the project 
 It was developed using Quartus Lite 19.1 with Platform Designer (Qsys).
