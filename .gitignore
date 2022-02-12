@@ -1,7 +1,5 @@
-# Squares.*
 *.bak
 *.tcl*
-# *_bb.v
 c5_pin_model_dump.txt
 incremental_db/
 db/
@@ -9,7 +7,6 @@ db/
 greybox_tmp/
 
 !Squares.v
-# !Squares.sdc
 
 *_sim
 squares/simulation
@@ -25,7 +22,6 @@ squares/simulation
 *.html
 *.jdi
 *.jpg
-# *.mif
 *.pin
 *.pof
 *.ptf.*
